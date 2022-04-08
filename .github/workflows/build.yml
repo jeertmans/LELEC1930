@@ -11,6 +11,8 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
+          latexmk_use_xelatex: true
+          latexmk_shell_escape: true
           root_file: |
             seance0.tex
             seance1.tex
