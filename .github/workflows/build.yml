@@ -8,14 +8,23 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v2
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Prepare TeX files
+        run: |
+          python run.py
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
           latexmk_shell_escape: true
           extra_system_packages: "py-pygments"
           root_file: |
-            seance0.tex
-            seance1.tex
-            seance2.tex
-            seance3.tex
-            seance4.tex
+            TP_*.tex
+            rappel_complexes.tex
+          glob_root_file: true
+      - uses: actions/upload-artifact@v2
+        with:
+          name: PDFs
+          path: "*.pdf"
