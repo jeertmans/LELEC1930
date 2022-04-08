@@ -1,0 +1,395 @@
+\documentclass [a4paper, 11pt] {article}
+
+\newcommand\seancetitle{Modulation}
+\newcommand\seancenumber{2}
+\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
+
+\input{preamble.tex}
+
+\begin{document}
+
+    \makeseancetitle
+    \thispagestyle{firstpage}
+    
+    \part*{Rappel}
+    
+    Le rôle d'un système de communications est de transmettre de l'information, aussi appelée signal en bande de base, au travers d'un canal. Le terme \say{bande de base} fait référence aux fréquences présentes dans le signal d'origine. Afin de transmettre le signal d'un endroit à un autre, il est commun de moduler ce dernier afin de décaler sa fréquence autour d'une porteuse $f_c$.
+    
+    \paragraph{Modulation en amplitude} Le cas le plus simple de modulation est la modulation en amplitude (AM). Le signal en bande de base $m(t)$ est multiplié par une porteuse $c(t)$ : $s(t) = c(t)\cdot m(t)$. En prenant
+    \begin{equation}
+        c(t) = A_c \cos(2\pi f_c t),
+    \end{equation}
+    où $f_c$ est la fréquence porteuse, on déplace le contenu fréquentiel du signal $m(t)$ en le copiant autour des fréquences $-f_c$ et $f_c$ (voir \autoref{fig:am}). Dans le cas d'un signal à bande limitée, on définit sa largeur de bande, $B_T$, comme étant la différence entre sa plus haute et sa plus basse fréquence. Ici, $B_T = 2W$.
+    
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \pgfmathsetmacro{\W}{1};
+            \pgfmathsetmacro{\H}{1.5};
+            \pgfmathsetmacro{\Hbis}{0.7 * \H};
+            \pgfmathsetmacro{\fc}{2};
+            \pgfmathsetmacro{\dx}{.5};
+            \pgfmathsetmacro{\dy}{1};
+            \coordinate (W1) at (0,0);
+            \draw[->] (W1) ++(-\dx,0) 
+            -- ++(\dx,0) 
+            -- ++({2*\W},0) coordinate (S1) 
+            -- ++({2*\W},0) 
+            -- ++(\dx,0) node[right] {$f$};
+            \draw[->] (S1) -- ++(0,\H) -- ++(0,\dy) node[above,anchor=south east] {$M(f)$};
+            \draw[ultra thick,red] (W1) 
+            -- ++(\W,0) node[below] {$-W$} 
+            -- ++(\W,\H) node[above,anchor=south west] {$M(0)$} coordinate (N1)
+            -- ++(\W,-\H) node[below] {$W$}
+            -- ++(\W,0) coordinate (E1);
+            
+            \path (E1) ++(2, 0) coordinate (W2);
+            \draw[->] (W2) ++(-\dx,0) 
+            -- ++(\dx,0) 
+            -- ++({2*\W},0) node[below,text=red] {$-f_c$}
+            -- ++(\fc,0) coordinate (S2) 
+            -- ++(\fc,0) node[below,text=red] {$f_c$}
+            -- ++({2*\W},0)
+            -- ++(\dx,0) node[right] {$f$};
+            \draw[->] (S2) -- ++(0,\H) -- ++(0,\dy) node[above,anchor=south east] {$S(f)$};
+            \path (S2) -- ++(\fc,0) -- ++(-\W,0) coordinate (startW);
+            \draw[ultra thick,red] (W2)
+            -- ++(\W,0) coordinate (A) % node[below] {$-f_c-W$} 
+            -- ++(\W,\Hbis) % node[above,anchor=south west] {$\frac{A_c}{2}$}
+            -- ++(\W,-\Hbis) coordinate (B) % node[below] {$-f_c+W$}
+            -- (startW) coordinate (C) % node[below] {$f_c-W$} 
+            -- ++(\W,\Hbis) % node[above,anchor=south west] {$\frac{A_c}{2}$}
+            -- ++(\W,-\Hbis) coordinate (D) % node[below] {$f_c+W$}
+            -- ++(\W,0);
+            
+            \path (A) -- ++(0,-1) coordinate (V);
+            
+            \draw[|-|,ultra thick,red] (A |- V) -- (B |- V) node[midway,below] {$2W$};
+            \draw[|-|,ultra thick,red] (C |- V) -- (D |- V) node[midway,below] {$2W$};
+            
+        \end{tikzpicture}
+        \caption{Modulation en amplitude : contenu fréquentiel.}
+        \label{fig:am}
+    \end{figure}
+    
+    \paragraph{Modulation en fréquence} La modulation en fréquence (FM) consiste à envoyer un signal $s(t)$ dont la fréquence varie linéairement avec le message $m(t)$ :
+    \begin{equation}
+        f_i(t) = f_c + k_f m(t),
+    \end{equation}
+    avec $k_f$ la sensibilité en \si{\hertz\per\volt}. Le produit $k_f m(t)$ indique la déviation en fréquence, $\Delta f$, et sa valeur maximale est $k_f A_m$, avec $A_m$ l'amplitude du signal en bande de base.
+    
+    En intégrant la fréquence pour obtenir la phase\footnote{Pour rappel, la fréquence instantanée est donnée par la dérivée de la phase : $f_i(t) = \frac{1}{2\pi}\frac{d\theta_i (t)}{dt}$.}, on trouve l'expression du signal modulé :
+    \begin{equation}
+        s(t) = A_c \cos \left[2\pi f_c t + 2\pi k_f \int\limits_0^t m(\tau)d\tau \right].
+    \end{equation}
+    
+    On définit l'index de modulation $\beta=\frac{\Delta f}{W}$ tel que $B_T \approx 2\Delta f \left(1 + \frac{1}{\beta}\right)\approx 2\left(\Delta f + W\right)$.
+    
+    \pagebreak
+    \pagestyle{nextpages}
+    
+    \paragraph{Modulation digitale} Jusqu'ici, les signaux considérés étaient continus. Dans le cas de signaux discrets (imaginez envoyer un signal en code Morse toutes les secondes), il est utile d'appliquer une modulation digitale. Le message est une séquence de symboles complexes, $I(n)$, appartenant à une constellation donnée. \textit{Une constellation} est simplement une association entre un groupe de bits et un nombre dans le plan complexe. Un exemple de constellation très simple serait d'associer le bit 1 à la valeur $1+0j$ et le bit 0 à la valeur $-1+0j$ (voir \autoref{fig:const_1}). Ensuite, les symboles passent dans un filtre de mise en forme, $u(t)$, afin d'obtenir un signal continu :
+    \begin{equation}
+        x(t) = \sum\limits_{n=0}^{\infty}I(n) u(t-nT),
+    \end{equation}
+    où $T$ est la durée d'un symbole (ou l'espace entre deux symboles).
+    
+    Comme $x(t)$ est complexe, il est commun de noter sa partie réelle $I$
+    \begin{equation}
+        x_I(t) = \Re \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\},
+    \end{equation}
+    et sa partie imaginaire $Q$
+    \begin{equation}
+        x_Q(t) = \Im \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\}.
+    \end{equation}
+    
+    Enfin, ce signal est ensuite modulé pour obtenir
+    \begin{equation}
+        x_{RF} = x_I(t) \cos(2\pi f_c t) + x_Q(t)\sin(2\pi f_c t).
+    \end{equation}
+    
+    \begin{minipage}[[b]{.49\textwidth}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                grid,
+                grid style={gray!50},
+                grid=both,
+                xlabel={$I$},
+                ylabel={$Q$},
+                axis equal image,
+                ymin=-1.4,ymax=1.4,
+                xmin=-1.4,xmax=1.4,
+            ]
+                \draw (axis cs:0,0) circle [blue, radius=1];
+                \node [circle,draw=black,fill=red,label=right:{\textbf{1}}] at (axis cs:1,0) {};
+                \node [circle,draw=black,fill=red,label=left:{\textbf{0}}] at (axis cs:-1,0) {};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Constellation (BPSK).}
+        \label{fig:const_1}
+    \end{figure}
+    \end{minipage}
+    \begin{minipage}[[b]{.49\textwidth}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                grid,
+                grid style={gray!50},
+                grid=both,
+                xlabel={$I$},
+                ylabel={$Q$},
+                axis equal image,
+                ymin=-1.4,ymax=1.4,
+                xmin=-1.4,xmax=1.4,
+            ]
+                \draw (axis cs:0,0) circle [blue, radius=1];
+                \node [circle,draw=black,fill=red,label=right:{\textbf{11}}] at (axis cs:{cos(45)},{sin(45)}) {};
+                \node [circle,draw=black,fill=red,label=right:{\textbf{10}}] at (axis cs:{cos(45)},{-sin(45)}) {};
+                \node [circle,draw=black,fill=red,label=left:{\textbf{00}}] at (axis cs:{-cos(45)},{-sin(45)}) {};
+                \node [circle,draw=black,fill=red,label=left:{\textbf{01}}] at (axis cs:{-cos(45)},{sin(45)}) {};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Constellation (QPSK).}
+        \label{fig:const_2}
+    \end{figure}
+    \end{minipage}
+    
+    \pagebreak
+    \part*{Exercices}
+    
+    \begin{exercice}[Modulation AM]{1}
+        Un signal $m(t)$ est modulé en modulation d'amplitude autour d'une fréquence porteuse $f_c=\SI{900}{\kilo\hertz}$.
+        
+        \begin{enumerate}
+            \item Donnez l'expression du signal modulé $s(t)$ en fonction de $m(t)$.
+            \item Représentez le contenu fréquentiel de $s(t)$ étant donné le contenu fréquentiel de $m(t)$ (voir \autoref{fig:freq_am}).
+        \end{enumerate}
+        
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \begin{axis}[
+                    grid,
+                    grid style={gray!50},
+                    grid=both,
+                    xlabel={$f (\si{\kilo\hertz})$},
+                    ylabel={$M(f)$},
+                ]
+                    \addplot[ultra thick, red, smooth] plot coordinates
+                    {
+                        (-2,0)
+                        (-1, .3)
+                        (0,1)
+                        (4,0)
+                    };
+                \end{axis}
+            \end{tikzpicture}
+            \caption{Contenu fréquentiel de $m(t)$.}
+            \label{fig:freq_am}
+        \end{figure}
+        
+    \end{exercice}
+    
+    \begin{reponse}
+        
+        \begin{enumerate}
+            \item On substitue pour obtenir $s(t) = A_c m(t) \cos(2\pi \cdot \num{900e3} t)$.
+            \item Le contenu fréquentiel de $s(t)$ est simplement celui de $m(t)$, recopié autour de $-f_c$ et $f_c$, et multiplié par $\frac{A_c}{2}$ :
+            \begin{equation}
+                S(f) = \frac{A_c}{2} \left[M(f-f_c) + M(f+f_c) \right].
+            \end{equation}
+        \end{enumerate}
+        
+    \end{reponse}
+    
+    \begin{exercice}[Modulation FM]{2}
+    
+        \begin{enumerate}
+            \item Un modulateur FM réalise une déviation maximale de \SI{30}{\kilo\hertz} et présente une sensibilité de \SI{4}{\kilo\hertz\per\volt}. Déterminez l'amplitude maximale du signal modulant en entrée.
+            \item Un signal modulant de \SI{10}{\volt} produit une déviation de fréquence de \SI{75}{\kilo\hertz} à la sortie d'un modulateur FM. Déterminez la sensibilité de celui-ci et la déviation de fréquence provoquée par un signal modulant de \SI{2}{\volt}. Si le signal modulant a une amplitude maximale de \SI{10}{\volt} et une fréquence maximale de \SI{15}{\kilo\hertz}, calculez la bande occupée par le signal modulé ainsi que l'indice de modulation.
+            \item Comparez la largeur de bande calculée ci-dessus à celle nécessaire si le même signal était modulé en AM.
+        \end{enumerate}
+        
+    \end{exercice}
+    
+    \begin{reponse}
+        \begin{enumerate}
+            \item En prenant la définition de la déviation maximale $\Delta f$ et en isolant $A_m$, on trouve :
+            \begin{equation}
+                A_m = \frac{\Delta f}{k_f} = \frac{\num{30e3}}{\num{4e3}} = \SI{7.5}{\volt}.
+            \end{equation}
+        \item \begin{enumerate}
+                \item Si $A_m=\SI{10}{\volt}$, alors
+                \begin{equation}
+                    k_f = \frac{\num{75e3}}{10} = \SI{7.5}{\kilo\hertz\per\volt}.
+                \end{equation}
+                \item Si $A_m=\SI{2}{\volt}$, alors
+                \begin{equation}
+                    \Delta f = 2 \cdot \num{7.5e3} = \SI{15}{\kilo\hertz}.
+                \end{equation}
+                \item Par définition, $B_T = 2 W=\SI{30}{\kilo\hertz}$. De ce fait
+                \begin{equation}
+                    \beta = \frac{\num{30e3}}{\num{15e3}}=2.
+                \end{equation}
+            \end{enumerate}
+        \end{enumerate}
+    \end{reponse}
+    
+    \begin{exercice}[Modulation digitale]{3}
+        On considère une modulation digitale linéaire utilisant le filtre de mise en forme décrit sur la \autoref{fig:shape_filter}. On envoie la séquence de symboles suivante : $I(0) = 1 + j$, $I(1) = j$ et $I(2) = -1$.
+        
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \begin{axis}[
+                    grid,
+                    grid style={gray!50},
+                    grid=both,
+                    xlabel={$t/T$},
+                    ylabel={$u(t)$},
+                    ymin=0,ymax=1.2,
+                    xmin=-3,xmax=3,
+                ]
+                    \draw[ultra thick, red] (axis cs:-3,0) 
+                    -- (axis cs:-2,0)
+                    -- (axis cs:0,1)
+                    -- (axis cs:2,0)
+                    -- (axis cs:3,0);
+                \end{axis}
+            \end{tikzpicture}
+            \caption{Filtre de mise en forme triangulaire.}
+            \label{fig:shape_filter}
+        \end{figure}
+        
+        \begin{enumerate}
+            \item Représentez les signaux $I$ et $Q$ avant la modulation autour de la porteuse.
+            \item Ces signaux souffriront-ils d'interférence entre symboles ? Si oui, évaluez l'interférence dont souffre le symbole $I(0)$ pour la séquence envoyée.
+        \end{enumerate}
+    \end{exercice}
+    
+    \begin{reponse}
+    
+        \begin{enumerate}
+            \item Les signaux $I$ et $Q$ s'obtiennent assez simplement en sommant plusieurs versions décalées de $u(t)$, chacune multipliée par son symbole correspondant.
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                    \begin{axis}[
+                        grid,
+                        grid style={gray!50},
+                        grid=both,
+                        xlabel={$t/T$},
+                        ylabel={$x_I(t)$},
+                        ymin=-1.2,ymax=1.2,
+                        xmin=-3,xmax=5,
+                    ]
+                        \draw[ultra thick, red] (axis cs:-3,0) 
+                        -- (axis cs:-2,0)
+                        -- (axis cs:0,1)
+                        -- (axis cs:2,-1)
+                        -- (axis cs:4,0)
+                        -- (axis cs:5,0);
+                    \end{axis}
+                \end{tikzpicture}
+                \caption{Signal I.}
+                \label{fig:i}
+            \end{figure}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                    \begin{axis}[
+                        grid,
+                        grid style={gray!50},
+                        grid=both,
+                        xlabel={$t/T$},
+                        ylabel={$x_Q(t)$},
+                        ymin=0,ymax=2.2,
+                        xmin=-3,xmax=5,
+                    ]
+                        \draw[ultra thick, red] (axis cs:-3,0) 
+                        -- (axis cs:-2,0)
+                        -- (axis cs:-1,.5)
+                        -- (axis cs:0,1.5)
+                        -- (axis cs:1,1.5)
+                        -- (axis cs:2,.5)
+                        -- (axis cs:3,0)
+                        -- (axis cs:4,0)
+                        -- (axis cs:5,0);
+                    \end{axis}
+                \end{tikzpicture}
+                \caption{Signal Q.}
+                \label{fig:q}
+            \end{figure}
+            \item Comme $x_Q(t)$ n'est pas égal à 1, il y a bien interférence en $t=0$. Pour quantifier l'interférence, on va comparer le signal reçu en $t=0$ avec $I(0)$. La valeur reçue vaut $1+1.5j$ alors que $I(0)=1+j$. On a donc une erreur de $0.5j$.
+        \end{enumerate}
+    
+    \end{reponse}
+        
+    \begin{exercice}[Modulation digitale]{4}
+        
+        Un filtre de mise en forme beaucoup plus utilisé est celui présenté à la \autoref{fig:srrc}. Pour ce type de filtre, l'excès de bande passante, c.-à-d. le surplus de bande passante utilisé à cause du filtre, $\Delta f$, est donné par :
+        \begin{equation}
+            \Delta f = \frac{\alpha}{2 T},
+        \end{equation}
+        avec $\alpha=0.2$ le facteur de roll-off et $T$ l'inverse de la fréquence de symboles.\\
+        
+        On souhaite transmettre un signal vidéo en format $320\times180$, où chaque pixel possède trois couleurs et chaque couleur occupe 8 bits. La transmission doit se faire à un rythme de 30 images par secondes. La bande passante disponible est de \SI{5}{\mega\hertz}
+        
+        \begin{enumerate}
+            \item Calculez le débit en termes de bits par seconde qu'il faudrait avoir pour transmettre une telle vidéo.
+            \item Déterminez le nombre de symboles par secondes qui peut passer dans la bande passante.
+            \item Déterminer la taille de constellation requise pour que le signal puisse transmettre la vidéo.
+            \item Refaites les calculs pour une vidéo en noir et blanc.
+        \end{enumerate}
+        
+        \begin{figure}[H]
+            \pgfmathsetmacro{\T}{1}
+            \pgfmathsetmacro{\bbeta}{.2}
+            \pgfmathsetmacro{\fplus}{(1+\bbeta)/(2*\T)}
+            \pgfmathsetmacro{\fminus}{(1-\bbeta)/(2*\T)}
+            \pgfmathsetmacro{\pitb}{180*\T/\bbeta}
+            \centering
+            \begin{tikzpicture}[
+                declare function={ srrc(\f) = 
+                (abs(\f) <= \fminus) * 1 +
+                and(abs(\f) > \fminus, abs(\f) <= \fplus) * 0.5 * (1 + cos(\pitb * (abs(\f) - \fminus)))
+                ; }
+            ]
+                \begin{axis}[
+                    grid,
+                    grid style={gray!50},
+                    grid=both,
+                    xlabel={$fT$},
+                    ylabel={$U(f)$},
+                ]
+                    \addplot[ultra thick, red, domain=-1:1]{sqrt(abs(srrc(x)))};
+                \end{axis}
+            \end{tikzpicture}
+            \caption{Contenu fréquentiel du filtre de mise en forme SRRC de roll-off $\alpha=0.2$.}
+            \label{fig:srrc}
+        \end{figure}
+        
+    \end{exercice}
+        
+    \begin{reponse}
+        \begin{enumerate}
+            \item Le débit en bits s'obtient aisément : $320\cdot180\cdot3\cdot8\cdot30= \num{41.472e6}$ bits par seconde.
+            \item Pour calculer le débit en symboles, il faut résoudre pour $\frac{1}{T}$
+            \begin{equation}
+                \frac{1}{2T} + \Delta f = \SI{5}{\mega\hertz},
+            \end{equation}
+            et l'on trouve alors $\frac{1}{T} = \frac{2 \cdot \num{5e6}}{1 + \alpha}= \SI{8.3}{\mega\hertz}$.
+            \item La taille de la constellation est $2^N$ avec $N$ le nombre de bits par symbole. Afin d'avoir le débit nécessaire, on doit prendre le plus petit entier $N$ tel que
+            \begin{equation}
+                N \ge \frac{\num{41.472e6}}{\num{8.3e6}} = 4.98
+            \end{equation}
+            
+            On choisit donc 5 bits par symboles. La constellation a donc une taille de 32 éléments.
+            \item Le débit requis est réduit d'un facteur 3, il faut donc 2 bits par symboles (on arrondit au-dessus).
+        \end{enumerate}
+    \end{reponse}
+
+\end{document}

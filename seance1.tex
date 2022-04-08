@@ -1,0 +1,254 @@
+\documentclass [a4paper, 11pt] {article}
+
+\newcommand\seancetitle{Lignes de transmissions}
+\newcommand\seancenumber{1}
+\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
+
+\input{preamble.tex}
+
+\begin{document}
+
+    \makeseancetitle
+    \thispagestyle{firstpage}
+    
+    \part*{Rappel}
+    
+    Une ligne de transmission peut être modélisée comme sur la \autoref{fig:tline}, dont les paramètres sont décrits dans le \autoref{tab:tline}. Grâce à ce modèle, il est possible de calculer l'impédance de la ligne, $Z_0$, et l'exposant de propagation, $\gamma$,
+    
+    \vspace{.5cm}
+    
+    \noindent
+    \begin{minipage}{.5\linewidth}
+        \begin{equation}\label{eq:impedance}
+            Z_0 = \sqrt{\frac{R' + j \omega L'}{G' + j \omega C'}},
+        \end{equation}
+    \end{minipage}%
+    \begin{minipage}{.5\linewidth}
+        \begin{equation}
+            \gamma = \sqrt{(R' + j \omega L')(G' + j \omega C')},
+        \end{equation}
+    \end{minipage}
+    
+    \vspace{.5cm}
+    
+    \noindent
+    avec $\omega$ la pulsation en $\si{\radian\per\second}$. \textbf{Attention} à bien travailler en complexe, car $Z_0$ et $\gamma$ peuvent être complexes. La partie réelle de $\gamma$, notée $\alpha$, est la constante d'atténuation et la partie imaginaire, notée $\beta$, est la constante de phase. Finalement, la vitesse de propagation de l'onde, $v_p$, aussi appelée vitesse de phase, peut s'obtenir :
+    
+    \begin{equation}
+        v_p = \frac{\omega}{\beta}.
+    \end{equation}
+    
+    La constante d'atténuation, $\alpha$, permet de lier la tension d'entrée $V(z,t)$ avec la tension à la sortie $V(z+dz,t)$, après une distance $dz$ donc :
+    
+    \begin{equation}
+        |V(z+dz,t)| = e^{-\alpha dz} |V(z,t)|.
+    \end{equation}
+    
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}
+            \draw (0,0) to [short, *-] (8,0)
+            to [TL, l_=$G'dz$] (8,4)
+            to [short] (5,4)
+            (8,4) to [short, -*, i={$i(z+dz,t)$}] (10,4)
+            to [open, v^>={$v(z+dz,t)$}] (10,0)
+            to [short, *-] (5,0)
+            (0,0) to [open, v^<={$v(z, t)$}] (0,4)
+            to [short, *-,i={$i(z,t)$}] (1,4)
+            to [R, l=$R'dz$] (3,4)
+            to [L, l=$L'dz$] (5,4)
+            to [C, l=$C'dz$] (5,0);
+        \end{circuitikz}
+        \caption{Ligne de transmission.}
+        \label{fig:tline}
+    \end{figure}
+    
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{lcl}
+            Description & Symbole & Unités \\
+            \hline
+            Résistance linéique & $R'$ & \si{\ohm\per\meter} \\
+            Conductance linéique & $G'$ & \si{\siemens\per\meter} \\
+            Inductance linéique & $L'$ & \si{\henry\per\meter} \\
+            Capacité linéique & $C'$ & \si{\farad\per\meter}
+            
+        \end{tabular}
+        \caption{Paramètres du modèle de ligne de transmission.}
+        \label{tab:tline}
+    \end{table}
+    
+    \pagebreak
+    \pagestyle{nextpages}
+    
+    En télécommunications, les pertes par câble ne sont pas les seules pertes à prendre en compte (\autoref{fig:radio_losses}). La puissance du signal reçu à l'antenne réceptrice (RX) est une fonction de la puissance isotrope rayonnée équivalente (EIRP en anglais) et de l'affaiblissement de propagation (path loss). L'EIRP se calcule de la manière suivante :
+    \begin{equation}
+        EIRP\Big|_{\si{\decibel\meter}} = P_t\Big|_{\si{\decibel\meter}} + G_t\Big|_{\si{\decibel}} - L_c\Big|_{\si{\decibel}},
+    \end{equation}
+    où $P_t$ est la puissance transmise par l'émetteur, $G_t$ est le gain de l'antenne émettrice et $L_c$ sont les pertes liées au câble reliant l'émetteur et l'antenne.
+    
+    Ensuite, l'affaiblissement de propagation dans un cas d'espace vide (free space), c.-à-d. sans obstacle, s'obtient comme suit :
+    \begin{equation}
+        L_{FS}\Big|_{\si{\decibel}} \approx 32.4 + 20 \log(f\Big|_{\si{\mega\hertz}}) + 20 \log(D\Big|_{\si{\kilo\meter}}),
+    \end{equation}
+    avec $f$ la fréquence (en \si{\mega\hertz}) et $D$ la distance inter-antennes (en \si{\kilo\meter}).
+    
+    De là, on peut finalement calculer le niveau de puissance reçu à l'antenne réceptrice (RSL) :
+    
+    \begin{equation}
+        RSL\Big|_{\si{\decibel\meter}} = EIRP\Big|_{\si{\decibel\meter}} + G_r\Big|_{\si{\decibel}} - L_{FS}\Big|_{\si{\decibel}},
+    \end{equation}
+    avec $G_r$ le gain de l'antenne réceptrice.
+    
+    \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle,draw,label=above:{TX}] (TX) at (0,0) {};
+                \node[circle,draw,label=above:{RX}] (RX) at (12,0) {};
+                \path (TX) -- ++(0,-4) node[draw,rectangle,rounded corners] (transmetteur) {Émetteur};
+                \draw[->,thick,dashed] (transmetteur) -- (TX) node[midway,above,sloped,align=center] {Ligne de\\transmission};
+                \draw (RX) -- (RX |- transmetteur.north) coordinate (bottom);
+                \draw (bottom) ++(-.5,0) -- ++(1,0);
+
+                \draw[|<->|] (TX.center |-, -4.7) -- (RX.center |-, -4.7) node[midway,above,sloped] {Distance inter-antennes};
+                
+                \foreach \i in {1,...,3} {
+                    \draw (TX) ++(30:\i) arc (30:-30:\i);
+                }
+            \end{tikzpicture}
+            \caption{Calcul de pertes lors de télécommunications.}
+            \label{fig:radio_losses}
+        \end{figure}
+    
+    \pagebreak
+    \part*{Exercices}
+    
+    \begin{exercice}[Câble vidéo]{1}
+        Considérez un câble coaxial RG218U, fréquemment utilisé pour la transmission vidéo dans les ultra hautes fréquences (UHF). Les valeurs des paramètres primaires sont données dans le \autoref{tab:exo1}. La conductance $G$ est supposée négligeable.
+        
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{cl}
+                Symbole & Valeur \\
+                \hline
+                $R'$ & \SI{0.368}{\ohm\per\meter} \\
+                $L'$ & \SI{250}{\nano\henry\per\meter} \\
+                $C'$ & \SI{102.4}{\pico\farad\per\meter}
+            \end{tabular}
+            \caption{Paramètres du modèle de ligne de transmission.}
+            \label{tab:exo1}
+        \end{table}
+        
+        \begin{enumerate}
+            \item Calculez l'impédance caractéristique du câble, la constance d'atténuation et la vitesse de phase pour un signal à \SI{100}{\mega\hertz}.
+            \item En supposant une puissance à l'entrée de \SI{66}{\micro\watt}, déterminez la longueur maximum de câble pour que la puissance à la sortie soit au moins égale à \SI{0.42}{\micro\watt}.
+        \end{enumerate}
+    \end{exercice}
+    
+    \begin{reponse}
+        Une simple application des formules du rappel permet de répondre aux questions :
+        
+        \begin{enumerate}
+            \item \begin{enumerate}
+                \item $Z_0=49.41-0.06j$, $|Z_0|=\SI{49.41}{\ohm}$
+                \item $\alpha=\SI{0.0037}{\per\meter}$
+                \item $v_p=\SI{197642218}{\meter\per\second}$
+            \end{enumerate}
+            \item Comme la puissance est proportionnelle au carré de la tension (loi d'Ohm), on peut écrire :
+            \begin{equation}
+                \frac{\SI{0.42}{\micro\watt}}{\SI{66}{\micro\watt}} = \frac{|V(z+dz,t)|^2}{|V(z,t)|^2} = e^{-2\alpha dz}.
+            \end{equation}
+            Ensuite, en isolant la longueur de câble $dz$ :
+            \begin{equation}
+                dz = \frac{1}{-2\alpha}\ln\left(\frac{\SI{0.42}{\micro\watt}}{\SI{66}{\micro\watt}}\right) = \frac{1}{2\alpha}\ln\left(\frac{\SI{66}{\micro\watt}}{\SI{0.42}{\micro\watt}}\right) = \SI{679}{\meter}.
+            \end{equation}
+        \end{enumerate}
+    \end{reponse}
+    
+    \begin{exercice}[Adaptation d'impédance]{2}
+        En pratique, on souhaite souvent avoir une impédance de ligne bien précise afin que les câbles utilisés puissent être compatibles avec un maximum d'appareils différents. Ici, on souhaite avoir une impédance de ligne $|Z_0|=\SI{50}{\ohm}$.
+        
+        \begin{enumerate}
+            \item Dans un premier temps, calculez la fréquence qui permettrait d'atteindre l'impédance voulue.
+            \item Dans un second temps, on va plutôt changer la résistance linéique du câble\footnote{En pratique, on ne peut pas changer la composition du câble à notre guise. On va donc plutôt rajouter une résistance en fin de ligne pour compenser la différence entre l'impédance réelle et celle voulue.}. Calculez la valeur de résistance linéique $G'$ qu'il faudrait utiliser pour avoir l'impédance recherchée.
+            \item Est-il possible de rajouter une conductance linéique afin d'augmenter l'impédance de ligne ?
+        \end{enumerate}
+    \end{exercice}
+    
+    \begin{reponse}
+        En prenant le module de l'\autoref{eq:impedance} et en mettant tout au carré, on obtient :
+        \begin{equation}
+            50^2 =\left|\frac{R' + j \omega L'}{G' + j \omega C'}\right|.
+        \end{equation}
+        Ensuite, on peut résoudre (analytiquement, avec la calculette ou via \py{Python}) l'équation pour trouver $f=\frac{\omega}{2\pi}$ ou $R'$:
+        \begin{equation}
+            2500 =\frac{\sqrt{R'^2 + \omega^2 L'^2}}{\sqrt{G'^2 + \omega^2 C'^2}} \Rightarrow 2500^2 =\frac{R'^2 + \omega^2 L'^2}{G'^2 + \omega^2 C'^2}.
+        \end{equation}
+        \begin{enumerate}
+            \item On obtient environ \SI{1.06}{\mega\hertz} comme fréquence nécessaire pour avoir une impédance de \SI{50}{\ohm}.
+            \item On calcule qu'il faudrait augmenter la résistance linéique du câble à \SI{34.76}{\ohm\per\meter}.
+            \item Non, rajouter l'effet de la conductance linéique ne peut que réduire l'impédance de ligne.
+        \end{enumerate}
+    \end{reponse}
+    
+    \begin{exercice}[Lien radio]{3}
+    
+        Considérez le lien radio illustré sur la \autoref{fig:radio_link}, avec les données suivantes :
+        
+        \begin{enumerate}
+            \item L'émetteur travaille à une fréquence de \SI{1}{\giga\hertz}.
+            \item L'émetteur et son antenne sont séparés par un câble coaxial RG9 de \SI{15}{\meter}. L'atténuation de ce dernier est d'environ \SI{0.23}{\decibel\per\meter}.
+            \item La distance entre l'antenne émettrice (TX) et l'antenne réceptrice (RX) est de \SI{8}{\kilo\meter}.
+            \item L'antenne TX possède un gain de \SI{17}{\decibel} et une perte due à la connexion câblée de \SI{1.5}{\decibel}.
+            \item L'antenne RX possède un gain de \SI{2}{\decibel} et un seul de sensibilité à \SI{-75}{\decibel\meter}.
+        \end{enumerate}
+        
+        Calculez la puissance minimale requise à l'émetteur pour que le signal soit bien reçu.
+    
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \node[circle,draw,label=above:{TX}] (TX) at (0,0) {};
+                \node[circle,draw,label=above:{RX}] (RX) at (12,0) {};
+                \path (TX) -- ++(0,-2) node[draw,rectangle,rounded corners] (transmetteur) {Émetteur};
+                \draw[->,thick,dashed] (transmetteur) -- (TX) node[midway,above,sloped] {RG9};
+                \draw (RX) -- (RX |- transmetteur.north) coordinate (bottom);
+                \draw (bottom) ++(-.5,0) -- ++(1,0);
+                
+                \draw[|<->|] (-2, |- transmetteur) -- (-2, |- TX.center) node[midway,above,sloped] {\SI{15}{\meter}};
+                \draw[|<->|] (TX.center |-, -3) -- (RX.center |-, -3) node[midway,above,sloped] {\SI{8}{\kilo\meter}};
+                
+                \foreach \i in {1,...,3} {
+                    \draw (TX) ++(30:\i) arc (30:-30:\i);
+                }
+            \end{tikzpicture}
+            \caption{Lien radio.}
+            \label{fig:radio_link}
+        \end{figure}
+    \end{exercice}
+    
+    \begin{reponse}
+        En reprenant ce qui est donné dans le rappel, on peut d'abord calculer l'EIRP :
+        \begin{equation}
+            EIRP\Big|_{\si{\decibel\meter}} = P_t\Big|_{\si{\decibel\meter}} + 17 - L_c\Big|_{\si{\decibel}}
+        \end{equation}
+        avec $L_c = 1.5 + 15\cdot 0.23 = \SI{4.95}{\decibel}$.
+        
+        Ensuite, l'affaiblissement de propagation peut se calculer :
+        \begin{equation}
+            L_{FS}\Big|_{\si{\decibel}} \approx 32.4 + 20 \log(1000) + 20 \log(8) = \SI{110.5}{\decibel},
+        \end{equation}
+        
+        Pour finir, on peut trouver la puissance minimale à l'émission afin d'obtenir un signal supérieur ou égal à \SI{-75}{\decibel\meter} à l'antenne réceptrice :
+        \begin{equation}
+            -75 \leq P_t\Big|_{\si{\decibel\meter}} + 17 - 4.95 + 2 - 110.5
+        \end{equation}
+        
+        On trouve $P_t \geq \SI{21.4}{\decibel\meter}$.
+        
+        
+    \end{reponse}
+        
+   
+
+\end{document}
