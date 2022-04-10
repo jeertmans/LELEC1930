@@ -13,22 +13,90 @@
     
     \part*{Rappel}
     
+    En télécommunications, la majorité, si pas l'entièreté, des calculs sont effectués sur un ordinateur. Le but de cette séance est donc de vous familiariser avec l'implémentation de concepts vus au cours à l'aide du langage de programmation \py{Python}.
     
+    Afin de pouvoir mener à bien cette séance, on vous demandera d'\textbf{installer les packages} \py{numpy} et \py{scipy}. En plus de ces derniers, il vous est conseillé d'installer les packages \py{matplotlib} et \py{notebook}. Le premier permet de tracer des graphiques scientifiques très aisément, tandis que le second offre un environnement de programmation propice aux tests.
+    
+    En bref, vous pouvez tout installer via une seule commande dans votre terminal : \texttt{pip install numpy scipy matplotlib notebook}.
+    
+    \paragraph{Note :} \textit{La plupart de ces packages sont installés par défaut si vous utilisez Anaconda.}
+    
+    \begin{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Exemple de plot
+
+x = np.linspace(-5, 5, 25)  # 25 valeurs entre -5 et 5 (compris)
+y = x ** 2
+
+plt.plot(x, y)
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Une jolie parabole")
+plt.show()  # Affiche le graphique, non nécessaire dans un Notebook
+    \end{python}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{imgs/parabole.pdf}
+        \caption{Résultat obtenu avec le code ci-dessus.}
+        \label{fig:parabole}
+    \end{figure}
+    
+    Plus tout autre question concernant le code, ne l'oubliez jamais : Google est votre ami ! L'assistant aussi par ailleurs ;-)
     
     \pagebreak
     \pagestyle{nextpages}
-    
-    
-    
-    \pagebreak
     \part*{Exercices}
     
     \begin{exercice}[Calcul du BER d'un QAM-4]{1}
     
+        L'objectif de cet exercice est de réussir à calculer le Bit Error Rate (BER), taux d'erreur en français, d'un signal et de voir son évolution en fonction du niveau de bruit, ou plutôt du Signal to Noise Ratio SNR.
+        
+        On considère donc la transmission d'une séquence de $N=\num{1e6}$ symboles QAM-4 :
+        \begin{equation}
+            x[k] = \pm 1 \pm j,
+        \end{equation}
+        avec $k=0,...,N$.
+        
+        Lors de l'envoi, le canal de transmission ajoute un bruit sur le signal de telle manière que le signal reçu, $y$, soit de la forme :
+        \begin{equation}
+            y[k] = x[k] + n[k],
+        \end{equation}
+        avec $n[k]$ le bruit à l'instant $k$.
+        
+        Ici, on modélise le bruit comme étant un bruit blanc gaussien, c.-à-.d une variable aléatoire suivant une distribution normale de moyenne nulle. Les symboles étant complexes, le bruit l'est tout autant. On notera donc $\sigma_n^2$ la variance du bruit complexe, et $\sigma_n^2/2$ la variance des parties réelles et imaginaires.
+        
+        Au récepteur, chaque symbole est décodé comme étant celui le plus proche de $y[k]$. On notera l'estimation du signal original $\hat{x}[k]$. Dans un monde idéal, sans bruit, on aura donc que $x[k]=\hat{x}[k]$ pour tout $k$. Le BER du signal est donc simplement le nombre de symboles erronés dans $\hat{x}[k]$ sur le nombre total de symboles.
+        
+        Finalement, on définit le SNR comme :
+        \begin{equation}
+            \text{SNR} = \frac{2}{\sigma_n^2}.
+        \end{equation}
+        
+        \begin{enumerate}
+            \item Générez la séquence $x[k]$ de manière aléatoire (voir \href{https://numpy.org/doc/stable/reference/random/generated/numpy.random.randint.html}{\py{numpy.random.randint}}).
+            \item Générez la séquence $n[k]$ de bruit avec $\sigma_n^2 = \num{1e-2}$ (voir \href{https://numpy.org/doc/stable/reference/random/generated/numpy.random.randn.html}{\py{numpy.random.randn}}).
+            \item Calculez les échantillons $y[k]$ et afficher les sur le diagramme de la constellation.
+            \item Estimez le symbole d'origine $\hat{x}[k]$ sur base de cet échantillon.
+            \item Calculez le BER.
+            \item Refaites toutes ces étapes pour différents niveaux de bruits (conseil : utilisez \py{np.logspace(-2, 1, 25)}).
+            \item Tracez la courbe du BER versus le SNR (conseil : utilisez \py{plt.semilogy(10 * np.log10(SNR), BER)}) et vérifiez que vous obtenez des résultats cohérents.
+        \end{enumerate}
+    
     \end{exercice}
     
     \begin{reponse}
-
+        Une solution possible à l'exercice peut être visionnée dans ce \href{https://github.com/jeertmans/LELEC1930/blob/main/notebooks/seance4.ipynb}{Notebook}.
+    \end{reponse}
+    
+    \begin{exercice}[Discrete Cosine Tranform]{2}
+    
+    \end{exercice}
+    
+    \begin{reponse}
+        Une solution possible à l'exercice peut être visionnée dans ce \href{https://github.com/jeertmans/LELEC1930/blob/main/notebooks/seance4.ipynb}{Notebook}.
     \end{reponse}
 
 \end{document}
