@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - "*.tex"
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch:
 jobs:
   build_latex:
@@ -30,3 +32,8 @@ jobs:
         with:
           name: PDFs
           path: "*.pdf"
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "*.pdf"
