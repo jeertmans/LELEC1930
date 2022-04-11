@@ -19,16 +19,22 @@
     
     Lors de la transmission d'un message, il n'est pas rare d'observer une déformation du message lors de son chemin. De ce fait, l'information reçue peut ne contenir que de manière partielle le message original.
     
-    En anticipation à ce problème, le message est alors envoyé sous une forme encodée, souvent plus longue, afin d'augmenter le taux de réussite quant à la bonne réception du message. De manière générale, on utilise \textbf{un dictionnaire} permettant d'encoder un message de $k$ bits sur $n$ bits. On définit le \textbf{taux du code} comme étant alors $\frac{k}{n}$. Les $n-k$ derniers bits (en \textcolor{blue}{bleu} sur la \autoref{fig:encodage}) sont appelés \textbf{bits de contrôle}.
+    En anticipation à ce problème, le message est alors envoyé sous une forme encodée, souvent plus longue, afin d'augmenter le taux de réussite quant à la bonne réception du message. De manière générale, on utilise \textbf{un dictionnaire} permettant d'encoder un message de $k$ bits sur $n$ bits. On définit le \textbf{taux du code} comme étant alors $\frac{k}{n}$.
     
     \begin{figure}[H]
         \centering
         \begin{equation*}
-            \begin{bmatrix}[c|cccccc]
-               00 & 1 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 \\
-               01 & 1 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1\\
-               10 & 0 & 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0\\
-               11 & 0 & 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1\\
+            \begin{matrix}
+                00 \rightarrow \\
+                01 \rightarrow\\
+                10 \rightarrow\\
+                11 \rightarrow\\
+            \end{matrix}
+            \begin{bmatrix}[cccccc]
+               1 & 0 &  1 &  0 &  1 &  0 \\
+               1 & 1 &  1 &  1 &  1 &  1\\
+               0 & 0 &  0 &  0 &  0 &  0\\
+               0 & 1 &  0 &  1 &  0 &  1\\
             \end{bmatrix}
         \end{equation*}
         \caption{Dictionnaire d'encodage d'un message de 2 bits sur 6 bits.}
@@ -61,26 +67,46 @@
     \begin{figure}[H]
         \centering
         \begin{equation*}
-            \begin{bmatrix}[c|ccccccc]
-               0000 & 0 & 0 & 0 & 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0 \\
-               0001 & 0 & 0 & 0 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
-               0010 & 0 & 0 & 1 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
-               0011 & 0 & 0 & 1 & 1 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
-               0100 & 0 & 1 & 0 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
-               0101 & 0 & 1 & 0 & 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
-               0110 & 0 & 1 & 1 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
-               0111 & 0 & 1 & 1 & 1 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0 \\
+            \begin{matrix}
+               0000 \rightarrow \\
+               0001 \rightarrow \\
+               0010 \rightarrow \\
+               0011 \rightarrow \\
+               0100 \rightarrow \\
+               0101 \rightarrow \\
+               0110 \rightarrow \\
+               0111 \rightarrow \\
+            \end{matrix}
+            \begin{bmatrix}[ccccccc]
+               0 & 0 & 0 & 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0 \\
+               0 & 0 & 0 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
+               0 & 0 & 1 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
+               0 & 0 & 1 & 1 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
+               0 & 1 & 0 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
+               0 & 1 & 0 & 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
+               0 & 1 & 1 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
+               0 & 1 & 1 & 1 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0 \\
             \end{bmatrix}
-            \&
-            \begin{bmatrix}[c|ccccccc]
-               1000 & 1 & 0 & 0 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
-               1001 & 1 & 0 & 0 & 1 & \color{blue} 0 & \color{blue} 0 & \color{blue} 1 \\
-               1010 & 1 & 0 & 1 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 0 \\
-               1011 & 1 & 0 & 1 & 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 \\
-               1100 & 1 & 1 & 0 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 \\
-               1101 & 1 & 1 & 0 & 1 & \color{blue} 1 & \color{blue} 0 & \color{blue} 0 \\
-               1110 & 1 & 1 & 1 & 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 1 \\
-               1111 & 1 & 1 & 1 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
+            \hspace{.3cm}\&\hspace{.4cm}
+            \begin{matrix}
+               1000 \rightarrow \\
+               1001 \rightarrow \\
+               1010 \rightarrow \\
+               1011 \rightarrow \\
+               1100 \rightarrow \\
+               1101 \rightarrow \\
+               1110 \rightarrow \\
+               1111 \rightarrow \\
+            \end{matrix}
+            \begin{bmatrix}[ccccccc]
+               1 & 0 & 0 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
+               1 & 0 & 0 & 1 & \color{blue} 0 & \color{blue} 0 & \color{blue} 1 \\
+               1 & 0 & 1 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 0 \\
+               1 & 0 & 1 & 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 \\
+               1 & 1 & 0 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 \\
+               1 & 1 & 0 & 1 & \color{blue} 1 & \color{blue} 0 & \color{blue} 0 \\
+               1 & 1 & 1 & 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 1 \\
+               1 & 1 & 1 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
             \end{bmatrix}
         \end{equation*}
         \caption{Dictionnaire du code de Hamming (7,4).}
@@ -91,11 +117,11 @@
         \centering
         \begin{equation*}
             \doubleunderline{G} =
-            \begin{bmatrix}[c|ccccccc]
-               1000 & 1 & 0 & 0 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
-               0100 & 0 & 1 & 0 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
-               0010 & 0 & 0 & 1 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
-               0001 & 0 & 0 & 0 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
+            \begin{bmatrix}[ccccccc]
+               1 & 0 & 0 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
+               0 & 1 & 0 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
+               0 & 0 & 1 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
+               0 & 0 & 0 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
             \end{bmatrix}
             \hspace{.7cm}
             \doubleunderline{H} =
@@ -136,11 +162,17 @@
         À partir du code suivant :
         
         \begin{equation*}
-            \begin{bmatrix}[c|ccccccc]
-               00 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-               01 & 1 & 0 & 0 & 1 & 1 & 0 & 1\\
-               10 & 0 & 1 & 1 & 0 & 1 & 0 & 1\\
-               11 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+            \begin{matrix}
+                00 \rightarrow \\
+                01 \rightarrow\\
+                10 \rightarrow\\
+                11 \rightarrow\\
+            \end{matrix}
+            \begin{bmatrix}[ccccccc]
+               0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+               1 & 0 & 0 & 1 & 1 & 0 & 1\\
+               0 & 1 & 1 & 0 & 1 & 0 & 1\\
+               1 & 1 & 1 & 1 & 0 & 0 & 0\\
             \end{bmatrix}
         \end{equation*}
       
@@ -257,7 +289,7 @@
                         }
                         child [missing]
                         child {
-                            node[iv]{3}
+                            node[iv]{4}
                             child {
                                 node[ev]{T(2)}
                             }
