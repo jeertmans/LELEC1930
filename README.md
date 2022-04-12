@@ -4,7 +4,7 @@ Ce répertoire contient les différents fichiers sources utilisés pour les séa
 
 ### Contribuer
 
-Ce répertoire étant plubic, vous pouvez proposer vos modifications via le système de [Pull Request](https://github.com/jeertmans/LELEC1930/pulls), et poser vos questions via les [Issues](https://github.com/jeertmans/LELEC1930/issues) ou en me contactant par [mail](mailto:jerome.eertmans@uclouvain.be).
+Ce répertoire étant public, vous pouvez proposer vos modifications via le système de [Pull Request](https://github.com/jeertmans/LELEC1930/pulls), et poser vos questions via les [Issues](https://github.com/jeertmans/LELEC1930/issues) ou en me contactant par [mail](mailto:jerome.eertmans@uclouvain.be).
 
 Que cela soit pour corriger une faute de calcul, une faute d'orthographe, ou refaire totalement un exercice, n'hésitez pas !
 
