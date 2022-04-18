@@ -57,12 +57,14 @@
         \longrightarrow 00
     \end{equation}
     
-    Un \textbf{code de Hamming} est un code correcteur linéaire qui permet la détection d'une erreur si elle n'est présente que sur une lettre du message. Les codes linéaires peuvent être complètement représenté par une \textbf{matrice génératrice} $\doubleunderline{G}$ de taille $k \times n$. Cette matrice s'obtient en assemblant les mots de codes correspondant à la base canonique\footnote{1000, 0100, 0010 et 0001 dans le cas d'un mot d'information de 4 bits.}. À partir de n'importe quel mot d'information $\underline{i}$, on peut calculer son mot de code, $\underline{c}$, en effectuant le produit matriciel $\underline{c} = \doubleunderline{G} \times \underline{i}$.
+    Un \textbf{code de Hamming} est un code correcteur linéaire qui permet la détection d'une erreur si elle n'est présente que sur une lettre du message. Les codes linéaires peuvent être complètement représenté par une \textbf{matrice génératrice} $\doubleunderline{G}$ de taille $k \times n$. Cette matrice s'obtient en assemblant les mots de codes correspondant à la base canonique\footnote{1000, 0100, 0010 et 0001 dans le cas d'un mot d'information de 4 bits.}. À partir de n'importe quel mot d'information $\underline{i}$, on peut calculer son mot de code, $\underline{c}$, en effectuant le produit matriciel $\underline{c} = \doubleunderline{G} \; \underline{i}$.
     
     \pagebreak
     \pagestyle{nextpages}
     
-    On définit alors la \textbf{matrice de contrôle} $H$. Cette dernière est plus complexe à calculer dans un cas général, mais peut s'obtenir en transposant la partie \textcolor{blue}{bleue} de la matrice $\doubleunderline{G}$ d'un code de Hamming (voir \autoref{fig:generatrice_encodage_hamming_7_4}) et en y ajoutant une matrice identité à droite pour former une matrice $(n-k) \times n$. Il est alors possible de calculer le vecteur syndrome, $\underline{s}$, qui indique la présence ou non d'erreur(s) : $\underline{s} = \underline{c} \times \doubleunderline{H}^T$. Le vecteur nul indique l'absence d'erreurs.
+    On définit alors la \textbf{matrice de contrôle} $H$. Cette dernière est plus complexe à calculer dans un cas général. Néanmoins, lorsque la matrice $\doubleunderline{G}$ a une structure particulière formée d'une sous-matrice identité (ici représentée en noir sur la \autoref{fig:generatrice_encodage_hamming_7_4}) accolée à une autre sous-matrice (ici représentée en bleu), dans ce cas, la matrice de parité  peut s'obtenir en transposant la partie \textcolor{blue}{bleue} de la matrice $\doubleunderline{G}$ et en y ajoutant une sous-matrice identité à droite pour compléter une matrice de taille $(n-k) \times n$. C'est le cas notamment pour la matrice du code de Hamming (voir ci-dessous).
+    
+    Pour un bloc reçu $\underline{c}$, le vecteur syndrome est donné par $\underline{s} = \underline{c} \; \doubleunderline{H}^T$.  Il indique la présence ou non d'erreur(s) :  le vecteur nul indique l'absence d'erreurs.
     
     \begin{figure}[H]
         \centering
@@ -137,9 +139,9 @@
     
     \subsection*{Compression des données}
     
-    Souvent, on souhaite réduire la taille des messages envoyés afin qu'ils soient transmis plus rapidement ou prennent moins de place sur un espace de stockage. Pour ce faire, les données sont compressées en utilisant un algorithme de codage. C'est le cas des fichiers \py{.zip} ou encore du codage Huffman. Ce dernier est décrit dans les slides du cours et un exemple détaillé est disponible sur la page \href{https://fr.wikipedia.org/wiki/Codage_de_Huffman#Principe}{Wikipédia}.
+    Souvent, on souhaite réduire la taille des messages envoyés afin qu'ils soient transmis plus rapidement ou prennent moins de place sur un espace de stockage. Pour ce faire, les données sont compressées en utilisant un algorithme de codage. C'est le cas des fichiers \py{.zip} ou encore du codage de Huffman. Ce dernier est décrit dans les slides du cours et un exemple détaillé est disponible sur la page \href{https://fr.wikipedia.org/wiki/Codage_de_Huffman#Principe}{Wikipédia}.
     
-    Le code Huffman se base sur une distribution connue des symboles afin de créer un code de compression. Le code de compression se présente sous forme d'un arbre où prendre une branche à gauche indique un 0 et une branche à droite un 1. Ci-dessous, l'arbre obtenu pour la phrase \say{this is an example of a huffman tree}, pour lequel le code final est : \{'e' : 000, 'a' : 010, ' ' : 111, ...\}.
+    Le code de Huffman se base sur une distribution connue des symboles afin de créer un code de compression. Le code de compression se présente sous forme d'un arbre où prendre une branche à gauche indique un 0 et une branche à droite un 1. Ci-dessous, l'arbre obtenu pour la phrase \say{this is an example of a huffman tree}, pour lequel le code final est : \{'e' : 000, 'a' : 010, ' ' : 111, ...\}.
     
     \begin{figure}[H]
         \centering
@@ -265,7 +267,7 @@
                 \overline{C}_1 &= 0.50 \cdot 1 + 0.15 \cdot 2 + 0.15 \cdot 3 + 0.10 \cdot 4 + 0.10 \cdot 4 = 2.05\\
                 \overline{C}_2 &= 0.50 \cdot 2 + 0.15 \cdot 2 + 0.15 \cdot 2 + 0.10 \cdot 3 + 0.10 \cdot 3 = 2.20
             \end{align*}
-            Le premier code est donc légèrement mieux.
+            Le premier code est donc légèrement meilleur.
             \item Voici un exemple d'arbre que vous pouvez obtenir. Des variations sont possibles, car plusieurs lettres apparaissent le même nombre de fois.
             \begin{center}
                 \begin{tikzpicture}[iv/.style={draw,fill=red!50,circle,minimum size=20pt,inner sep=0pt,text=black},ev/.style={draw,fill=yellow,rectangle,minimum size=20pt,inner sep=2pt,text=black}]
@@ -361,7 +363,7 @@
             \label{fig:planning}
         \end{figure}
         
-        On veut donc que le rapport des puissances soit de \SI{20}{\decibel}, c.-à-d. un rapport de 100 :
+        La distance $d_1=1$ km. On veut aussi que le rapport des puissances soit de \SI{20}{\decibel}, c.-à-d. un rapport de 100 :
         \begin{equation}
             \frac{S_1}{S_2} = 100 = \frac{d_2^3}{d_1^3} \Rightarrow d_2 = \SI{4.64}{\kilo\meter}.
         \end{equation}

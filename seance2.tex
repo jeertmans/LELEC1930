@@ -72,20 +72,19 @@
         \label{fig:am}
     \end{figure}
     
-    \paragraph{Modulation en fréquence} La modulation en fréquence (FM) consiste à envoyer un signal $s(t)$ dont la fréquence varie linéairement avec le message $m(t)$ :
+    \paragraph{Modulation en fréquence} La modulation en fréquence (FM) consiste à envoyer un signal $s(t)$ dont la fréquence instantanée varie linéairement avec le message $m(t)$ :
     \begin{equation}
         f_i(t) = f_c + k_f m(t),
     \end{equation}
-    avec $k_f$ la sensibilité en \si{\hertz\per\volt}. Le produit $k_f m(t)$ indique la déviation en fréquence, $\Delta f$, et sa valeur maximale est $k_f A_m$, avec $A_m$ l'amplitude du signal en bande de base.
+    avec $k_f$ la sensibilité en \si{\hertz\per\volt}. Le produit $k_f m(t)$ indique la déviation instantanée de fréquence, et sa valeur maximale est $f_d=k_f A_m$, avec $A_m$ l'amplitude du signal en bande de base.
     
     En intégrant la fréquence pour obtenir la phase\footnote{Pour rappel, la fréquence instantanée est donnée par la dérivée de la phase : $f_i(t) = \frac{1}{2\pi}\frac{d\theta_i (t)}{dt}$.}, on trouve l'expression du signal modulé :
     \begin{equation}
         s(t) = A_c \cos \left[2\pi f_c t + 2\pi k_f \int\limits_0^t m(\tau)d\tau \right].
     \end{equation}
     
-    On définit l'index de modulation $\beta=\frac{\Delta f}{W}$ tel que $B_T \approx 2\Delta f \left(1 + \frac{1}{\beta}\right)\approx 2\left(\Delta f + W\right)$.
+    On définit l'indice de modulation $\beta=\frac{f_d}{W}$. La bande passante du signal modulé est donné par la formule de Carson:  $B_T \approx 2\left(f_d + W\right) = 2f_d \left(1 + \frac{1}{\beta}\right)=2W(1+\beta)$.
     
-    \pagebreak
     \pagestyle{nextpages}
     
     \paragraph{Modulation digitale} Jusqu'ici, les signaux considérés étaient continus. Dans le cas de signaux discrets (imaginez envoyer un signal en code Morse toutes les secondes), il est utile d'appliquer une modulation digitale. Le message est une séquence de symboles complexes, $I(n)$, appartenant à une constellation donnée. \textit{Une constellation} est simplement une association entre un groupe de bits et un nombre dans le plan complexe. Un exemple de constellation très simple serait d'associer le bit 1 à la valeur $1+0j$ et le bit 0 à la valeur $-1+0j$ (voir \autoref{fig:const_1}). Ensuite, les symboles passent dans un filtre de mise en forme, $u(t)$, afin d'obtenir un signal continu :
@@ -94,11 +93,11 @@
     \end{equation}
     où $T$ est la durée d'un symbole (ou l'espace entre deux symboles).
     
-    Comme $x(t)$ est complexe, il est commun de noter sa partie réelle $I$
+    Comme $x(t)$ est complexe, il est commun de noter sa partie réelle $I$ (pour "In phase")
     \begin{equation}
         x_I(t) = \Re \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\},
     \end{equation}
-    et sa partie imaginaire $Q$
+    et sa partie imaginaire $Q$ (pour "in Quadrature")
     \begin{equation}
         x_Q(t) = \Im \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\}.
     \end{equation}
@@ -209,7 +208,7 @@
     
         \begin{enumerate}
             \item Un modulateur FM réalise une déviation maximale de \SI{30}{\kilo\hertz} et présente une sensibilité de \SI{4}{\kilo\hertz\per\volt}. Déterminez l'amplitude maximale du signal modulant en entrée.
-            \item Un signal modulant de \SI{10}{\volt} produit une déviation de fréquence de \SI{75}{\kilo\hertz} à la sortie d'un modulateur FM. Déterminez la sensibilité de celui-ci et la déviation de fréquence provoquée par un signal modulant de \SI{2}{\volt}. Si le signal modulant a une amplitude maximale de \SI{10}{\volt} et une fréquence maximale de \SI{15}{\kilo\hertz}, calculez la bande occupée par le signal modulé ainsi que l'indice de modulation.
+            \item Un signal modulant de \SI{10}{\volt} produit une déviation de fréquence de \SI{75}{\kilo\hertz} à la sortie d'un modulateur FM. Déterminez la sensibilité de celui-ci et la déviation de fréquence qui serait provoquée par un signal modulant de \SI{2}{\volt}. Toujours pour le même modulateur FM avec la même sensibilité, calculez la bande occupée par le signal modulé ainsi que l'indice de modulation si le signal modulant a une amplitude maximale de \SI{10}{\volt} et une fréquence maximale de \SI{15}{\kilo\hertz}, .
             \item Comparez la largeur de bande calculée ci-dessus à celle nécessaire si le même signal était modulé en AM.
         \end{enumerate}
         
@@ -217,9 +216,9 @@
     
     \begin{reponse}
         \begin{enumerate}
-            \item En prenant la définition de la déviation maximale $\Delta f$ et en isolant $A_m$, on trouve :
+            \item En prenant la définition de la déviation maximale $f_d$ et en isolant $A_m$, on trouve :
             \begin{equation}
-                A_m = \frac{\Delta f}{k_f} = \frac{\num{30e3}}{\num{4e3}} = \SI{7.5}{\volt}.
+                A_m = \frac{f_d}{k_f} = \frac{\num{30e3}}{\num{4e3}} = \SI{7.5}{\volt}.
             \end{equation}
         \item \begin{enumerate}
                 \item Si $A_m=\SI{10}{\volt}$, alors
@@ -228,12 +227,13 @@
                 \end{equation}
                 \item Si $A_m=\SI{2}{\volt}$, alors
                 \begin{equation}
-                    \Delta f = 2 \cdot \num{7.5e3} = \SI{15}{\kilo\hertz}.
+                    f_d = 2 \cdot \num{7.5e3} = \SI{15}{\kilo\hertz}.
                 \end{equation}
-                \item Par définition, $B_T = 2 W=\SI{30}{\kilo\hertz}$. De ce fait
+                \item Pour ce signal, la déviation de fréquence est de 75 kHz (voir (a)). De ce fait
                 \begin{equation}
-                    \beta = \frac{\num{30e3}}{\num{15e3}}=2.
+                    \beta = \frac{\num{75e3}}{\num{15e3}}=5.
                 \end{equation}
+                et la bande occupée est donnée par $B_T=2W (1+5) = 180$ kHz.
             \end{enumerate}
         \end{enumerate}
     \end{reponse}
@@ -323,20 +323,20 @@
                 \caption{Signal Q.}
                 \label{fig:q}
             \end{figure}
-            \item Comme $x_Q(t)$ n'est pas égal à 1, il y a bien interférence en $t=0$. Pour quantifier l'interférence, on va comparer le signal reçu en $t=0$ avec $I(0)$. La valeur reçue vaut $1+1.5j$ alors que $I(0)=1+j$. On a donc une erreur de $0.5j$.
+            \item Comme $x_Q(t)$ n'est pas égal à 1, il y a bien interférence en $t=0$. Pour quantifier l'interférence, on va comparer le signal reçu en $t=0$ avec $I(0)$. La valeur reçue vaut $1+1.5j$ alors que $I(0)=1+j$. On a donc une erreur de $0.5j$. On peut identifier que cette interférence provient du symbole I(1) multiplié par la valeur du filtre de mise en forme prise en $t=1$.
         \end{enumerate}
     
     \end{reponse}
         
     \begin{exercice}[Modulation digitale]{4}
         
-        Un filtre de mise en forme beaucoup plus utilisé est celui présenté à la \autoref{fig:srrc}. Pour ce type de filtre, l'excès de bande passante, c.-à-d. le surplus de bande passante utilisé à cause du filtre, $\Delta f$, est donné par :
+        Un filtre de mise en forme beaucoup plus utilisé est celui dont le contenu fréquentiel est présenté à la \autoref{fig:srrc}. Pour ce type de filtre, l'excès de bande passante, c.-à-d. le surplus de bande passante utilisé à cause du filtre, $\Delta f$, est donné, en bande de base, par :
         \begin{equation}
             \Delta f = \frac{\alpha}{2 T},
         \end{equation}
-        avec $\alpha=0.2$ le facteur de roll-off et $T$ l'inverse de la fréquence de symboles.\\
+        avec $\alpha=0.2$ le facteur de roll-off et $T$ l'inverse de la fréquence de symboles. Notez que, après modulation AM, la bande occupée sera donnée par $B_T=\frac{1+\alpha}{T}$.\\
         
-        On souhaite transmettre un signal vidéo en format $320\times180$, où chaque pixel possède trois couleurs et chaque couleur occupe 8 bits. La transmission doit se faire à un rythme de 30 images par secondes. La bande passante disponible est de \SI{5}{\mega\hertz}
+        On souhaite transmettre un signal vidéo en format $320\times180$, où chaque pixel possède trois couleurs et chaque couleur occupe 8 bits. La transmission doit se faire à un rythme de 30 images par secondes. La bande passante disponible est de \SI{10}{\mega\hertz}
         
         \begin{enumerate}
             \item Calculez le débit en termes de bits par seconde qu'il faudrait avoir pour transmettre une telle vidéo.
@@ -379,9 +379,9 @@
             \item Le débit en bits s'obtient aisément : $320\cdot180\cdot3\cdot8\cdot30= \num{41.472e6}$ bits par seconde.
             \item Pour calculer le débit en symboles, il faut résoudre pour $\frac{1}{T}$
             \begin{equation}
-                \frac{1}{2T} + \Delta f = \SI{5}{\mega\hertz},
+                \frac{1+\alpha}{T} = \SI{10}{\mega\hertz},
             \end{equation}
-            et l'on trouve alors $\frac{1}{T} = \frac{2 \cdot \num{5e6}}{1 + \alpha}= \SI{8.3}{\mega\hertz}$.
+            et l'on trouve alors $\frac{1}{T} = \frac{\num{10e6}}{1 + \alpha}= \SI{8.3}{\mega\hertz}$.
             \item La taille de la constellation est $2^N$ avec $N$ le nombre de bits par symbole. Afin d'avoir le débit nécessaire, on doit prendre le plus petit entier $N$ tel que
             \begin{equation}
                 N \ge \frac{\num{41.472e6}}{\num{8.3e6}} = 4.98
