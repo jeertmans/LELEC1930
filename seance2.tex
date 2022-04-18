@@ -93,11 +93,11 @@
     \end{equation}
     où $T$ est la durée d'un symbole (ou l'espace entre deux symboles).
     
-    Comme $x(t)$ est complexe, il est commun de noter sa partie réelle $I$ (pour "In phase")
+    Comme $x(t)$ est complexe, il est commun de noter sa partie réelle $I$ (pour \say{In phase})
     \begin{equation}
         x_I(t) = \Re \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\},
     \end{equation}
-    et sa partie imaginaire $Q$ (pour "in Quadrature")
+    et sa partie imaginaire $Q$ (pour \say{in Quadrature})
     \begin{equation}
         x_Q(t) = \Im \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\}.
     \end{equation}
@@ -221,7 +221,8 @@
                 A_m = \frac{f_d}{k_f} = \frac{\num{30e3}}{\num{4e3}} = \SI{7.5}{\volt}.
             \end{equation}
         \item \begin{enumerate}
-                \item Si $A_m=\SI{10}{\volt}$, alors
+                \item \label{enum:fd}
+                Si $A_m=\SI{10}{\volt}$, alors
                 \begin{equation}
                     k_f = \frac{\num{75e3}}{10} = \SI{7.5}{\kilo\hertz\per\volt}.
                 \end{equation}
@@ -229,7 +230,7 @@
                 \begin{equation}
                     f_d = 2 \cdot \num{7.5e3} = \SI{15}{\kilo\hertz}.
                 \end{equation}
-                \item Pour ce signal, la déviation de fréquence est de 75 kHz (voir (a)). De ce fait
+                \item Pour ce signal, la déviation de fréquence est de 75 kHz (voir \ref{enum:fd}). De ce fait
                 \begin{equation}
                     \beta = \frac{\num{75e3}}{\num{15e3}}=5.
                 \end{equation}
@@ -323,7 +324,7 @@
                 \caption{Signal Q.}
                 \label{fig:q}
             \end{figure}
-            \item Comme $x_Q(t)$ n'est pas égal à 1, il y a bien interférence en $t=0$. Pour quantifier l'interférence, on va comparer le signal reçu en $t=0$ avec $I(0)$. La valeur reçue vaut $1+1.5j$ alors que $I(0)=1+j$. On a donc une erreur de $0.5j$. On peut identifier que cette interférence provient du symbole I(1) multiplié par la valeur du filtre de mise en forme prise en $t=1$.
+            \item Comme $x_Q(t)$ n'est pas égal à 1, il y a bien interférence en $t=0$. Pour quantifier l'interférence, on va comparer le signal reçu en $t=0$ avec $I(0)$. La valeur reçue vaut $1+1.5j$ alors que $I(0)=1+j$. On a donc une erreur de $0.5j$. On peut identifier que cette interférence provient du symbole $I(1)$ multiplié par la valeur du filtre de mise en forme prise en $t=1$.
         \end{enumerate}
     
     \end{reponse}

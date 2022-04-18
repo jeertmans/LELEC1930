@@ -62,7 +62,7 @@
     \pagebreak
     \pagestyle{nextpages}
     
-    On définit alors la \textbf{matrice de contrôle} $H$. Cette dernière est plus complexe à calculer dans un cas général. Néanmoins, lorsque la matrice $\doubleunderline{G}$ a une structure particulière formée d'une sous-matrice identité (ici représentée en noir sur la \autoref{fig:generatrice_encodage_hamming_7_4}) accolée à une autre sous-matrice (ici représentée en bleu), dans ce cas, la matrice de parité  peut s'obtenir en transposant la partie \textcolor{blue}{bleue} de la matrice $\doubleunderline{G}$ et en y ajoutant une sous-matrice identité à droite pour compléter une matrice de taille $(n-k) \times n$. C'est le cas notamment pour la matrice du code de Hamming (voir ci-dessous).
+    On définit alors la \textbf{matrice de contrôle} $H$. Cette dernière est plus complexe à calculer dans un cas général. Néanmoins, lorsque la matrice $\doubleunderline{G}$ a une structure particulière formée d'une sous-matrice identité (ici représentée en noir sur la \autoref{fig:generatrice_encodage_hamming_7_4}) accolée à une autre sous-matrice (ici représentée en \textcolor{blue}{bleu}), dans ce cas, la matrice de parité  peut s'obtenir en transposant la partie \textcolor{blue}{bleue} de la matrice $\doubleunderline{G}$ et en y ajoutant une sous-matrice identité à droite pour compléter une matrice de taille $(n-k) \times n$. C'est le cas notamment pour la matrice du code de Hamming (voir ci-dessous).
     
     Pour un bloc reçu $\underline{c}$, le vecteur syndrome est donné par $\underline{s} = \underline{c} \; \doubleunderline{H}^T$.  Il indique la présence ou non d'erreur(s) :  le vecteur nul indique l'absence d'erreurs.
     
