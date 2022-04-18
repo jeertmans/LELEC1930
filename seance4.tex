@@ -70,7 +70,7 @@ plt.show()  # Affiche le graphique, non nécessaire dans un Notebook
         
         Au récepteur, chaque symbole est décodé comme étant celui le plus proche de $y[k]$. On notera l'estimation du signal original $\hat{x}[k]$. Dans un monde idéal, sans bruit, on aura donc que $x[k]=\hat{x}[k]$ pour tout $k$. Le BER du signal est donc simplement le nombre de symboles erronés dans $\hat{x}[k]$ sur le nombre total de symboles.
         
-        Finalement, on définit le SNR comme :
+        Finalement, comme la constellation a une variance de 2, on définit le SNR comme :
         \begin{equation}
             \text{SNR} = \frac{2}{\sigma_n^2}.
         \end{equation}
@@ -93,7 +93,7 @@ plt.show()  # Affiche le graphique, non nécessaire dans un Notebook
     
     \begin{exercice}[Transformée en cosinus discrète]{2}
     
-        La transformée en cosinus discrète (DCT) est opération mathématique sans perte qui permet d'exprimer un signal en fonction de son contenu fréquentiel. Similaire à la transformée de Fourier, la DCT est très utilisée lors de la compression d'images (exemple : JPEG).
+        La transformée en cosinus discrète (DCT) est une opération mathématique sans perte qui permet d'exprimer un signal en fonction de son contenu fréquentiel. Similaire à la transformée de Fourier, la DCT est très utilisée lors de la compression d'images (exemple : JPEG).
         
         Ici, vous allez travailler avec des images de taille $8 \times 8$. Comme les images sont des matrices de pixels, et non de vecteurs, il faut appliquer deux fois la DCT : une fois pour les lignes, une fois pour les colonnes. On appellera cette fonction \py{dct2} et son inverse \py{idct2}. Pour une matrice $N\times N$, on définit la DCT2 de $X$ comme :
         
@@ -147,7 +147,7 @@ def plot_image(X, ax=None):
             \item Retrouvez les coefficients compressés en re-multipliant par \py{Q2}, élément par élément.
             \item Appliquez la DCT inverse et observer la nouvelle image obtenue. Comparez-la en observant les deux images côte à côte.
             \item Vous pouvez également tester des quantifications plus ou moins fortes en multipliant toute la matrice \py{Q2} par une constante.
-            \item Si le DCT est une transformation sans perte, pourquoi la compression JPEG, qui utilise la DCT, est-elle une transformation \textbf{avec perte} ?
+            \item Si la DCT est une transformation sans perte, pourquoi la compression JPEG, qui utilise la DCT, est-elle une transformation \textbf{avec perte} ?
         \end{enumerate}
     \end{enumerate}
     
