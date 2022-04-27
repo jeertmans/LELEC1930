@@ -57,7 +57,7 @@
         \longrightarrow 00
     \end{equation}
     
-    Un \textbf{code de Hamming} est un code correcteur linéaire qui permet la détection d'une erreur si elle n'est présente que sur une lettre du message. Les codes linéaires peuvent être complètement représenté par une \textbf{matrice génératrice} $\doubleunderline{G}$ de taille $k \times n$. Cette matrice s'obtient en assemblant les mots de codes correspondant à la base canonique\footnote{1000, 0100, 0010 et 0001 dans le cas d'un mot d'information de 4 bits.}. À partir de n'importe quel mot d'information $\underline{i}$, on peut calculer son mot de code, $\underline{c}$, en effectuant le produit matriciel $\underline{c} = \doubleunderline{G} \; \underline{i}$.
+    Un \textbf{code de Hamming} est un code correcteur linéaire qui permet la détection d'une erreur si elle n'est présente que sur une lettre du message. Les codes linéaires peuvent être complètement représenté par une \textbf{matrice génératrice} $\doubleunderline{G}$ de taille $k \times n$. Cette matrice s'obtient en assemblant les mots de codes correspondant à la base canonique\footnote{1000, 0100, 0010 et 0001 dans le cas d'un mot d'information de 4 bits.}. À partir de n'importe quel mot d'information $\underline{i}$, on peut calculer son mot de code, $\underline{c}$, en effectuant le produit matriciel $\underline{c} = \underline{i} \; \doubleunderline{G}$.
     
     \pagebreak
     \pagestyle{nextpages}
