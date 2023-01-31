@@ -24,8 +24,11 @@ jobs:
         with:
           latexmk_shell_escape: true
           extra_system_packages: "py-pygments"
-          root_file: "*.tex"
+          root_file: |
+            "TP_*.tex"
+            rappel_complexes.tex
           glob_root_file: true
+          continue_on_error: true
       - uses: actions/upload-artifact@v2
         with:
           name: PDFs
