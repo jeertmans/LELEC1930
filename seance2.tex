@@ -1,7 +1,7 @@
 \documentclass [a4paper, 11pt] {article}
 
-\newcommand\seancetitle{Modulation}
-\newcommand\seancenumber{2}
+\newcommand\seancetitle{Lignes de transmissions}
+\newcommand\seancenumber{1}
 \def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
 
 \input{preamble.tex}
@@ -13,384 +13,242 @@
     
     \part*{Rappel}
     
-    Le rôle d'un système de communications est de transmettre de l'information, aussi appelée signal en bande de base, au travers d'un canal. Le terme \say{bande de base} fait référence aux fréquences présentes dans le signal d'origine. Afin de transmettre le signal d'un endroit à un autre, il est commun de moduler ce dernier afin de décaler sa fréquence autour d'une porteuse $f_c$.
+    Une ligne de transmission peut être modélisée comme sur la \autoref{fig:tline}, dont les paramètres sont décrits dans le \autoref{tab:tline}. Grâce à ce modèle, il est possible de calculer l'impédance de la ligne, $Z_0$, et l'exposant de propagation, $\gamma$,
     
-    \paragraph{Modulation en amplitude} Le cas le plus simple de modulation est la modulation en amplitude (AM). Le signal en bande de base $m(t)$ est multiplié par une porteuse $c(t)$ : $s(t) = c(t)\cdot m(t)$. En prenant
+    \vspace{.5cm}
+    
+    \noindent
+    \begin{minipage}{.5\linewidth}
+        \begin{equation}\label{eq:impedance}
+            Z_0 = \sqrt{\frac{R' + j \omega L'}{G' + j \omega C'}},
+        \end{equation}
+    \end{minipage}%
+    \begin{minipage}{.5\linewidth}
+        \begin{equation}
+            \gamma = \sqrt{(R' + j \omega L')(G' + j \omega C')},
+        \end{equation}
+    \end{minipage}
+    
+    \vspace{.5cm}
+    
+    \noindent
+    avec $\omega$ la pulsation en $\si{\radian\per\second}$. \textbf{Attention} à bien travailler en complexe, car $Z_0$ et $\gamma$ peuvent être complexes. La partie réelle de $\gamma$, notée $\alpha$, est la constante d'atténuation et la partie imaginaire, notée $\beta$, est la constante de phase. Finalement, la vitesse de propagation de l'onde, $v_p$, aussi appelée vitesse de phase, peut s'obtenir :
+    
     \begin{equation}
-        c(t) = A_c \cos(2\pi f_c t),
+        v_p = \frac{\omega}{\beta}.
     \end{equation}
-    où $f_c$ est la fréquence porteuse, on déplace le contenu fréquentiel du signal $m(t)$ en le copiant autour des fréquences $-f_c$ et $f_c$ (voir \autoref{fig:am}). Dans le cas d'un signal à bande limitée, on définit sa largeur de bande, $B_T$, comme étant la différence entre sa plus haute et sa plus basse fréquence. Ici, $B_T = 2W$.
+    
+    La constante d'atténuation, $\alpha$, permet de lier la tension d'entrée $V(z,t)$ avec la tension à la sortie $V(z+dz,t)$, après une distance $dz$ donc :
+    
+    \begin{equation}
+        |V(z+dz,t)| = e^{-\alpha dz} |V(z,t)|.
+    \end{equation}
     
     \begin{figure}[H]
         \centering
-        \begin{tikzpicture}
-            \pgfmathsetmacro{\W}{1};
-            \pgfmathsetmacro{\H}{1.5};
-            \pgfmathsetmacro{\Hbis}{0.7 * \H};
-            \pgfmathsetmacro{\fc}{2};
-            \pgfmathsetmacro{\dx}{.5};
-            \pgfmathsetmacro{\dy}{1};
-            \coordinate (W1) at (0,0);
-            \draw[->] (W1) ++(-\dx,0) 
-            -- ++(\dx,0) 
-            -- ++({2*\W},0) coordinate (S1) 
-            -- ++({2*\W},0) 
-            -- ++(\dx,0) node[right] {$f$};
-            \draw[->] (S1) -- ++(0,\H) -- ++(0,\dy) node[above,anchor=south east] {$M(f)$};
-            \draw[ultra thick,red] (W1) 
-            -- ++(\W,0) node[below] {$-W$} 
-            -- ++(\W,\H) node[above,anchor=south west] {$M(0)$} coordinate (N1)
-            -- ++(\W,-\H) node[below] {$W$}
-            -- ++(\W,0) coordinate (E1);
-            
-            \path (E1) ++(2, 0) coordinate (W2);
-            \draw[->] (W2) ++(-\dx,0) 
-            -- ++(\dx,0) 
-            -- ++({2*\W},0) node[below,text=red] {$-f_c$}
-            -- ++(\fc,0) coordinate (S2) 
-            -- ++(\fc,0) node[below,text=red] {$f_c$}
-            -- ++({2*\W},0)
-            -- ++(\dx,0) node[right] {$f$};
-            \draw[->] (S2) -- ++(0,\H) -- ++(0,\dy) node[above,anchor=south east] {$S(f)$};
-            \path (S2) -- ++(\fc,0) -- ++(-\W,0) coordinate (startW);
-            \draw[ultra thick,red] (W2)
-            -- ++(\W,0) coordinate (A) % node[below] {$-f_c-W$} 
-            -- ++(\W,\Hbis) % node[above,anchor=south west] {$\frac{A_c}{2}$}
-            -- ++(\W,-\Hbis) coordinate (B) % node[below] {$-f_c+W$}
-            -- (startW) coordinate (C) % node[below] {$f_c-W$} 
-            -- ++(\W,\Hbis) % node[above,anchor=south west] {$\frac{A_c}{2}$}
-            -- ++(\W,-\Hbis) coordinate (D) % node[below] {$f_c+W$}
-            -- ++(\W,0);
-            
-            \path (A) -- ++(0,-1) coordinate (V);
-            
-            \draw[|-|,ultra thick,red] (A |- V) -- (B |- V) node[midway,below] {$2W$};
-            \draw[|-|,ultra thick,red] (C |- V) -- (D |- V) node[midway,below] {$2W$};
-            
-        \end{tikzpicture}
-        \caption{Modulation en amplitude : contenu fréquentiel.}
-        \label{fig:am}
+        \begin{circuitikz}
+            \draw (0,0) to [short, *-] (8,0)
+            to [TL, l_=$G'dz$] (8,4)
+            to [short] (5,4)
+            (8,4) to [short, -*, i={$i(z+dz,t)$}] (10,4)
+            to [open, v^>={$v(z+dz,t)$}] (10,0)
+            to [short, *-] (5,0)
+            (0,0) to [open, v^<={$v(z, t)$}] (0,4)
+            to [short, *-,i={$i(z,t)$}] (1,4)
+            to [R, l=$R'dz$] (3,4)
+            to [L, l=$L'dz$] (5,4)
+            to [C, l=$C'dz$] (5,0);
+        \end{circuitikz}
+        \caption{Ligne de transmission.}
+        \label{fig:tline}
     \end{figure}
     
-    \paragraph{Modulation en fréquence} La modulation en fréquence (FM) consiste à envoyer un signal $s(t)$ dont la fréquence instantanée varie linéairement avec le message $m(t)$ :
-    \begin{equation}
-        f_i(t) = f_c + k_f m(t),
-    \end{equation}
-    avec $k_f$ la sensibilité en \si{\hertz\per\volt}. Le produit $k_f m(t)$ indique la déviation instantanée de fréquence, et sa valeur maximale est $f_d=k_f A_m$, avec $A_m$ l'amplitude du signal en bande de base.
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{lcl}
+            Description & Symbole & Unités \\
+            \hline
+            Résistance linéique & $R'$ & \si{\ohm\per\meter} \\
+            Conductance linéique & $G'$ & \si{\siemens\per\meter} \\
+            Inductance linéique & $L'$ & \si{\henry\per\meter} \\
+            Capacité linéique & $C'$ & \si{\farad\per\meter}
+            
+        \end{tabular}
+        \caption{Paramètres du modèle de ligne de transmission.}
+        \label{tab:tline}
+    \end{table}
     
-    En intégrant la fréquence pour obtenir la phase\footnote{Pour rappel, la fréquence instantanée est donnée par la dérivée de la phase : $f_i(t) = \frac{1}{2\pi}\frac{d\theta_i (t)}{dt}$.}, on trouve l'expression du signal modulé :
-    \begin{equation}
-        s(t) = A_c \cos \left[2\pi f_c t + 2\pi k_f \int\limits_0^t m(\tau)d\tau \right].
-    \end{equation}
-    
-    On définit l'indice de modulation $\beta=\frac{f_d}{W}$. La bande passante du signal modulé est donné par la formule de Carson:  $B_T \approx 2\left(f_d + W\right) = 2f_d \left(1 + \frac{1}{\beta}\right)=2W(1+\beta)$.
-    
+    \pagebreak
     \pagestyle{nextpages}
     
-    \paragraph{Modulation digitale} Jusqu'ici, les signaux considérés étaient continus. Dans le cas de signaux discrets (imaginez envoyer un signal en code Morse toutes les secondes), il est utile d'appliquer une modulation digitale. Le message est une séquence de symboles complexes, $I(n)$, appartenant à une constellation donnée. \textit{Une constellation} est simplement une association entre un groupe de bits et un nombre dans le plan complexe. Un exemple de constellation très simple serait d'associer le bit 1 à la valeur $1+0j$ et le bit 0 à la valeur $-1+0j$ (voir \autoref{fig:const_1}). Ensuite, les symboles passent dans un filtre de mise en forme, $u(t)$, afin d'obtenir un signal continu :
+    En télécommunications, les pertes par câble ne sont pas les seules pertes à prendre en compte (\autoref{fig:radio_losses}). La puissance du signal reçu à l'antenne réceptrice (RX) est une fonction de la puissance isotrope rayonnée équivalente (EIRP en anglais) et de l'affaiblissement de propagation (path loss). L'EIRP se calcule de la manière suivante :
     \begin{equation}
-        x(t) = \sum\limits_{n=0}^{\infty}I(n) u(t-nT),
+        EIRP\Big|_{\si{\decibel\meter}} = P_t\Big|_{\si{\decibel\meter}} + G_t\Big|_{\si{\decibel}} - L_c\Big|_{\si{\decibel}},
     \end{equation}
-    où $T$ est la durée d'un symbole (ou l'espace entre deux symboles).
+    où $P_t$ est la puissance transmise par l'émetteur, $G_t$ est le gain de l'antenne émettrice et $L_c$ sont les pertes liées au câble reliant l'émetteur et l'antenne.
     
-    Comme $x(t)$ est complexe, il est commun de noter sa partie réelle $I$ (pour \say{In phase})
+    Ensuite, l'affaiblissement de propagation dans un cas d'espace vide (free space), c.-à-d. sans obstacle, s'obtient comme suit :
     \begin{equation}
-        x_I(t) = \Re \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\},
+        L_{FS}\Big|_{\si{\decibel}} \approx 32.4 + 20 \log(f\Big|_{\si{\mega\hertz}}) + 20 \log(D\Big|_{\si{\kilo\meter}}),
     \end{equation}
-    et sa partie imaginaire $Q$ (pour \say{in Quadrature})
-    \begin{equation}
-        x_Q(t) = \Im \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\}.
-    \end{equation}
+    avec $f$ la fréquence (en \si{\mega\hertz}) et $D$ la distance inter-antennes (en \si{\kilo\meter}).
     
-    Enfin, ce signal est ensuite modulé pour obtenir
-    \begin{equation}
-        x_{RF} = x_I(t) \cos(2\pi f_c t) + x_Q(t)\sin(2\pi f_c t).
-    \end{equation}
+    De là, on peut finalement calculer le niveau de puissance reçu à l'antenne réceptrice (RSL) :
     
-    \begin{minipage}[[b]{.49\textwidth}
+    \begin{equation}
+        RSL\Big|_{\si{\decibel\meter}} = EIRP\Big|_{\si{\decibel\meter}} + G_r\Big|_{\si{\decibel}} - L_{FS}\Big|_{\si{\decibel}},
+    \end{equation}
+    avec $G_r$ le gain de l'antenne réceptrice.
+    
     \begin{figure}[H]
-        \centering
-        \begin{tikzpicture}
-            \begin{axis}[
-                grid,
-                grid style={gray!50},
-                grid=both,
-                xlabel={$I$},
-                ylabel={$Q$},
-                axis equal image,
-                ymin=-1.4,ymax=1.4,
-                xmin=-1.4,xmax=1.4,
-            ]
-                \draw (axis cs:0,0) circle [blue, radius=1];
-                \node [circle,draw=black,fill=red,label=right:{\textbf{1}}] at (axis cs:1,0) {};
-                \node [circle,draw=black,fill=red,label=left:{\textbf{0}}] at (axis cs:-1,0) {};
-            \end{axis}
-        \end{tikzpicture}
-        \caption{Constellation (BPSK).}
-        \label{fig:const_1}
-    \end{figure}
-    \end{minipage}
-    \begin{minipage}[[b]{.49\textwidth}
-    \begin{figure}[H]
-        \centering
-        \begin{tikzpicture}
-            \begin{axis}[
-                grid,
-                grid style={gray!50},
-                grid=both,
-                xlabel={$I$},
-                ylabel={$Q$},
-                axis equal image,
-                ymin=-1.4,ymax=1.4,
-                xmin=-1.4,xmax=1.4,
-            ]
-                \draw (axis cs:0,0) circle [blue, radius=1];
-                \node [circle,draw=black,fill=red,label=right:{\textbf{11}}] at (axis cs:{cos(45)},{sin(45)}) {};
-                \node [circle,draw=black,fill=red,label=right:{\textbf{10}}] at (axis cs:{cos(45)},{-sin(45)}) {};
-                \node [circle,draw=black,fill=red,label=left:{\textbf{00}}] at (axis cs:{-cos(45)},{-sin(45)}) {};
-                \node [circle,draw=black,fill=red,label=left:{\textbf{01}}] at (axis cs:{-cos(45)},{sin(45)}) {};
-            \end{axis}
-        \end{tikzpicture}
-        \caption{Constellation (QPSK).}
-        \label{fig:const_2}
-    \end{figure}
-    \end{minipage}
+            \centering
+            \begin{tikzpicture}
+                \node[circle,draw,label=above:{TX}] (TX) at (0,0) {};
+                \node[circle,draw,label=above:{RX}] (RX) at (12,0) {};
+                \path (TX) -- ++(0,-4) node[draw,rectangle,rounded corners] (transmetteur) {Émetteur};
+                \draw[->,thick,dashed] (transmetteur) -- (TX) node[midway,above,sloped,align=center] {Ligne de\\transmission};
+                \draw (RX) -- (RX |- transmetteur.north) coordinate (bottom);
+                \draw (bottom) ++(-.5,0) -- ++(1,0);
+
+                \draw[|<->|] (TX.center |-, -4.7) -- (RX.center |-, -4.7) node[midway,above,sloped] {Distance inter-antennes};
+                
+                \foreach \i in {1,...,3} {
+                    \draw (TX) ++(30:\i) arc (30:-30:\i);
+                }
+            \end{tikzpicture}
+            \caption{Calcul de pertes lors de télécommunications.}
+            \label{fig:radio_losses}
+        \end{figure}
     
     \pagebreak
     \part*{Exercices}
     
-    \begin{exercice}[Modulation AM]{1}
-        Un signal $m(t)$ est modulé en modulation d'amplitude autour d'une fréquence porteuse $f_c=\SI{900}{\kilo\hertz}$.
+    \begin{exercice}[Câble vidéo]{1}
+        Considérez un câble coaxial RG218U, fréquemment utilisé pour la transmission vidéo dans les ultra hautes fréquences (UHF). Les valeurs des paramètres primaires sont données dans le \autoref{tab:exo1}. La conductance $G$ est supposée négligeable.
         
-        \begin{enumerate}
-            \item Donnez l'expression du signal modulé $s(t)$ en fonction de $m(t)$.
-            \item Représentez le contenu fréquentiel de $s(t)$ étant donné le contenu fréquentiel de $m(t)$ (voir \autoref{fig:freq_am}).
-        \end{enumerate}
-        
-        \begin{figure}[H]
+        \begin{table}[H]
             \centering
-            \begin{tikzpicture}
-                \begin{axis}[
-                    grid,
-                    grid style={gray!50},
-                    grid=both,
-                    xlabel={$f (\si{\kilo\hertz})$},
-                    ylabel={$M(f)$},
-                ]
-                    \addplot[ultra thick, red, smooth] plot coordinates
-                    {
-                        (-2,0)
-                        (-1, .3)
-                        (0,1)
-                        (4,0)
-                    };
-                \end{axis}
-            \end{tikzpicture}
-            \caption{Contenu fréquentiel de $m(t)$.}
-            \label{fig:freq_am}
-        \end{figure}
+            \begin{tabular}{cl}
+                Symbole & Valeur \\
+                \hline
+                $R'$ & \SI{0.368}{\ohm\per\meter} \\
+                $L'$ & \SI{250}{\nano\henry\per\meter} \\
+                $C'$ & \SI{102.4}{\pico\farad\per\meter}
+            \end{tabular}
+            \caption{Paramètres du modèle de ligne de transmission.}
+            \label{tab:exo1}
+        \end{table}
         
+        \begin{enumerate}
+            \item Calculez l'impédance caractéristique du câble, la constance d'atténuation et la vitesse de phase pour un signal à \SI{100}{\mega\hertz}.
+            \item En supposant une puissance à l'entrée de \SI{66}{\micro\watt}, déterminez la longueur maximum de câble pour que la puissance à la sortie soit au moins égale à \SI{0.42}{\micro\watt}.
+        \end{enumerate}
     \end{exercice}
     
     \begin{reponse}
+        Une simple application des formules du rappel permet de répondre aux questions :
         
         \begin{enumerate}
-            \item On substitue pour obtenir $s(t) = A_c m(t) \cos(2\pi \cdot \num{900e3} t)$.
-            \item Le contenu fréquentiel de $s(t)$ est simplement celui de $m(t)$, recopié autour de $-f_c$ et $f_c$, et multiplié par $\frac{A_c}{2}$ :
-            \begin{equation}
-                S(f) = \frac{A_c}{2} \left[M(f-f_c) + M(f+f_c) \right].
-            \end{equation}
-        \end{enumerate}
-        
-    \end{reponse}
-    
-    \begin{exercice}[Modulation FM]{2}
-    
-        \begin{enumerate}
-            \item Un modulateur FM réalise une déviation maximale de \SI{30}{\kilo\hertz} et présente une sensibilité de \SI{4}{\kilo\hertz\per\volt}. Déterminez l'amplitude maximale du signal modulant en entrée.
-            \item Un signal modulant de \SI{10}{\volt} produit une déviation de fréquence de \SI{75}{\kilo\hertz} à la sortie d'un modulateur FM. Déterminez la sensibilité de celui-ci et la déviation de fréquence qui serait provoquée par un signal modulant de \SI{2}{\volt}. Toujours pour le même modulateur FM avec la même sensibilité, calculez la bande occupée par le signal modulé ainsi que l'indice de modulation si le signal modulant a une amplitude maximale de \SI{10}{\volt} et une fréquence maximale de \SI{15}{\kilo\hertz}, .
-            \item Comparez la largeur de bande calculée ci-dessus à celle nécessaire si le même signal était modulé en AM.
-        \end{enumerate}
-        
-    \end{exercice}
-    
-    \begin{reponse}
-        \begin{enumerate}
-            \item En prenant la définition de la déviation maximale $f_d$ et en isolant $A_m$, on trouve :
-            \begin{equation}
-                A_m = \frac{f_d}{k_f} = \frac{\num{30e3}}{\num{4e3}} = \SI{7.5}{\volt}.
-            \end{equation}
-        \item \begin{enumerate}
-                \item \label{enum:fd}
-                Si $A_m=\SI{10}{\volt}$, alors
-                \begin{equation}
-                    k_f = \frac{\num{75e3}}{10} = \SI{7.5}{\kilo\hertz\per\volt}.
-                \end{equation}
-                \item Si $A_m=\SI{2}{\volt}$, alors
-                \begin{equation}
-                    f_d = 2 \cdot \num{7.5e3} = \SI{15}{\kilo\hertz}.
-                \end{equation}
-                \item Pour ce signal, la déviation de fréquence est de 75 kHz (voir \ref{enum:fd}). De ce fait
-                \begin{equation}
-                    \beta = \frac{\num{75e3}}{\num{15e3}}=5.
-                \end{equation}
-                et la bande occupée est donnée par $B_T=2W (1+5) = 180$ kHz.
+            \item \begin{enumerate}
+                \item $Z_0=49.41-0.06j$, $|Z_0|=\SI{49.41}{\ohm}$
+                \item $\alpha=\SI{0.0037}{\per\meter}$
+                \item $v_p=\SI{197642218}{\meter\per\second}$
             \end{enumerate}
+            \item Comme la puissance est proportionnelle au carré de la tension (loi d'Ohm), on peut écrire :
+            \begin{equation}
+                \frac{\SI{0.42}{\micro\watt}}{\SI{66}{\micro\watt}} = \frac{|V(z+dz,t)|^2}{|V(z,t)|^2} = e^{-2\alpha dz}.
+            \end{equation}
+            Ensuite, en isolant la longueur de câble $dz$ :
+            \begin{equation}
+                dz = \frac{1}{-2\alpha}\ln\left(\frac{\SI{0.42}{\micro\watt}}{\SI{66}{\micro\watt}}\right) = \frac{1}{2\alpha}\ln\left(\frac{\SI{66}{\micro\watt}}{\SI{0.42}{\micro\watt}}\right) = \SI{679}{\meter}.
+            \end{equation}
         \end{enumerate}
     \end{reponse}
     
-    \begin{exercice}[Modulation digitale]{3}
-        On considère une modulation digitale linéaire utilisant le filtre de mise en forme décrit sur la \autoref{fig:shape_filter}. On envoie la séquence de symboles suivante : $I(0) = 1 + j$, $I(1) = j$ et $I(2) = -1$.
+    \begin{exercice}[Adaptation d'impédance]{2}
+        En pratique, on souhaite souvent avoir une impédance de ligne bien précise afin que les câbles utilisés puissent être compatibles avec un maximum d'appareils différents. Ici, on souhaite avoir une impédance de ligne $|Z_0|=\SI{50}{\ohm}$.
         
+        \begin{enumerate}
+            \item Dans un premier temps, calculez la fréquence qui permettrait d'atteindre l'impédance voulue.
+            \item Dans un second temps, on va plutôt changer la résistance linéique du câble\footnote{En pratique, on ne peut pas changer la composition du câble à notre guise. On va donc plutôt rajouter une résistance en fin de ligne pour compenser la différence entre l'impédance réelle et celle voulue.}. Calculez la valeur de résistance linéique $G'$ qu'il faudrait utiliser pour avoir l'impédance recherchée.
+            \item Est-il possible de rajouter une conductance linéique afin d'augmenter l'impédance de ligne ?
+        \end{enumerate}
+    \end{exercice}
+    
+    \begin{reponse}
+        En prenant le module de l'\autoref{eq:impedance} et en mettant tout au carré, on obtient :
+        \begin{equation}
+            50^2 =\left|\frac{R' + j \omega L'}{G' + j \omega C'}\right|.
+        \end{equation}
+        Ensuite, on peut résoudre (analytiquement, avec la calculette ou via \py{Python}) l'équation pour trouver $f=\frac{\omega}{2\pi}$ ou $R'$:
+        \begin{equation}
+            2500 =\frac{\sqrt{R'^2 + \omega^2 L'^2}}{\sqrt{G'^2 + \omega^2 C'^2}} \Rightarrow 2500^2 =\frac{R'^2 + \omega^2 L'^2}{G'^2 + \omega^2 C'^2}.
+        \end{equation}
+        \begin{enumerate}
+            \item On obtient environ \SI{1.06}{\mega\hertz} comme fréquence nécessaire pour avoir une impédance de \SI{50}{\ohm}.
+            \item On calcule qu'il faudrait augmenter la résistance linéique du câble à \SI{34.76}{\ohm\per\meter}.
+            \item Non, rajouter l'effet de la conductance linéique ne peut que réduire l'impédance de ligne.
+        \end{enumerate}
+    \end{reponse}
+    
+    \begin{exercice}[Lien radio]{3}
+    
+        Considérez le lien radio illustré sur la \autoref{fig:radio_link}, avec les données suivantes :
+        
+        \begin{enumerate}
+            \item L'émetteur travaille à une fréquence de \SI{1}{\giga\hertz}.
+            \item L'émetteur et son antenne sont séparés par un câble coaxial RG9 de \SI{15}{\meter}. L'atténuation de ce dernier est d'environ \SI{0.23}{\decibel\per\meter}.
+            \item La distance entre l'antenne émettrice (TX) et l'antenne réceptrice (RX) est de \SI{8}{\kilo\meter}.
+            \item L'antenne TX possède un gain de \SI{17}{\decibel} et une perte due à la connexion câblée de \SI{1.5}{\decibel}.
+            \item L'antenne RX possède un gain de \SI{2}{\decibel} et un seul de sensibilité à \SI{-75}{\decibel\meter}.
+        \end{enumerate}
+        
+        Calculez la puissance minimale requise à l'émetteur pour que le signal soit bien reçu.
+    
         \begin{figure}[H]
             \centering
             \begin{tikzpicture}
-                \begin{axis}[
-                    grid,
-                    grid style={gray!50},
-                    grid=both,
-                    xlabel={$t/T$},
-                    ylabel={$u(t)$},
-                    ymin=0,ymax=1.2,
-                    xmin=-3,xmax=3,
-                ]
-                    \draw[ultra thick, red] (axis cs:-3,0) 
-                    -- (axis cs:-2,0)
-                    -- (axis cs:0,1)
-                    -- (axis cs:2,0)
-                    -- (axis cs:3,0);
-                \end{axis}
+                \node[circle,draw,label=above:{TX}] (TX) at (0,0) {};
+                \node[circle,draw,label=above:{RX}] (RX) at (12,0) {};
+                \path (TX) -- ++(0,-2) node[draw,rectangle,rounded corners] (transmetteur) {Émetteur};
+                \draw[->,thick,dashed] (transmetteur) -- (TX) node[midway,above,sloped] {RG9};
+                \draw (RX) -- (RX |- transmetteur.north) coordinate (bottom);
+                \draw (bottom) ++(-.5,0) -- ++(1,0);
+                
+                \draw[|<->|] (-2, |- transmetteur) -- (-2, |- TX.center) node[midway,above,sloped] {\SI{15}{\meter}};
+                \draw[|<->|] (TX.center |-, -3) -- (RX.center |-, -3) node[midway,above,sloped] {\SI{8}{\kilo\meter}};
+                
+                \foreach \i in {1,...,3} {
+                    \draw (TX) ++(30:\i) arc (30:-30:\i);
+                }
             \end{tikzpicture}
-            \caption{Filtre de mise en forme triangulaire.}
-            \label{fig:shape_filter}
+            \caption{Lien radio.}
+            \label{fig:radio_link}
         \end{figure}
-        
-        \begin{enumerate}
-            \item Représentez les signaux $I$ et $Q$ avant la modulation autour de la porteuse.
-            \item Ces signaux souffriront-ils d'interférence entre symboles ? Si oui, évaluez l'interférence dont souffre le symbole $I(0)$ pour la séquence envoyée.
-        \end{enumerate}
     \end{exercice}
     
     \begin{reponse}
-    
-        \begin{enumerate}
-            \item Les signaux $I$ et $Q$ s'obtiennent assez simplement en sommant plusieurs versions décalées de $u(t)$, chacune multipliée par son symbole correspondant.
-            \begin{figure}[H]
-                \centering
-                \begin{tikzpicture}
-                    \begin{axis}[
-                        grid,
-                        grid style={gray!50},
-                        grid=both,
-                        xlabel={$t/T$},
-                        ylabel={$x_I(t)$},
-                        ymin=-1.2,ymax=1.2,
-                        xmin=-3,xmax=5,
-                    ]
-                        \draw[ultra thick, red] (axis cs:-3,0) 
-                        -- (axis cs:-2,0)
-                        -- (axis cs:0,1)
-                        -- (axis cs:2,-1)
-                        -- (axis cs:4,0)
-                        -- (axis cs:5,0);
-                    \end{axis}
-                \end{tikzpicture}
-                \caption{Signal I.}
-                \label{fig:i}
-            \end{figure}
-            \begin{figure}[H]
-                \centering
-                \begin{tikzpicture}
-                    \begin{axis}[
-                        grid,
-                        grid style={gray!50},
-                        grid=both,
-                        xlabel={$t/T$},
-                        ylabel={$x_Q(t)$},
-                        ymin=0,ymax=2.2,
-                        xmin=-3,xmax=5,
-                    ]
-                        \draw[ultra thick, red] (axis cs:-3,0) 
-                        -- (axis cs:-2,0)
-                        -- (axis cs:-1,.5)
-                        -- (axis cs:0,1.5)
-                        -- (axis cs:1,1.5)
-                        -- (axis cs:2,.5)
-                        -- (axis cs:3,0)
-                        -- (axis cs:4,0)
-                        -- (axis cs:5,0);
-                    \end{axis}
-                \end{tikzpicture}
-                \caption{Signal Q.}
-                \label{fig:q}
-            \end{figure}
-            \item Comme $x_Q(t)$ n'est pas égal à 1, il y a bien interférence en $t=0$. Pour quantifier l'interférence, on va comparer le signal reçu en $t=0$ avec $I(0)$. La valeur reçue vaut $1+1.5j$ alors que $I(0)=1+j$. On a donc une erreur de $0.5j$. On peut identifier que cette interférence provient du symbole $I(1)$ multiplié par la valeur du filtre de mise en forme prise en $t=1$.
-        \end{enumerate}
-    
-    \end{reponse}
-        
-    \begin{exercice}[Modulation digitale]{4}
-        
-        Un filtre de mise en forme beaucoup plus utilisé est celui dont le contenu fréquentiel est présenté à la \autoref{fig:srrc}. Pour ce type de filtre, l'excès de bande passante, c.-à-d. le surplus de bande passante utilisé à cause du filtre, $\Delta f$, est donné, en bande de base, par :
+        En reprenant ce qui est donné dans le rappel, on peut d'abord calculer l'EIRP :
         \begin{equation}
-            \Delta f = \frac{\alpha}{2 T},
+            EIRP\Big|_{\si{\decibel\meter}} = P_t\Big|_{\si{\decibel\meter}} + 17 - L_c\Big|_{\si{\decibel}}
         \end{equation}
-        avec $\alpha=0.2$ le facteur de roll-off et $T$ l'inverse de la fréquence de symboles. Notez que, après modulation AM, la bande occupée sera donnée par $B_T=\frac{1+\alpha}{T}$.\\
+        avec $L_c = 1.5 + 15\cdot 0.23 = \SI{4.95}{\decibel}$.
         
-        On souhaite transmettre un signal vidéo en format $320\times180$, où chaque pixel possède trois couleurs et chaque couleur occupe 8 bits. La transmission doit se faire à un rythme de 30 images par secondes. La bande passante disponible est de \SI{10}{\mega\hertz}
+        Ensuite, l'affaiblissement de propagation peut se calculer :
+        \begin{equation}
+            L_{FS}\Big|_{\si{\decibel}} \approx 32.4 + 20 \log(1000) + 20 \log(8) = \SI{110.5}{\decibel},
+        \end{equation}
         
-        \begin{enumerate}
-            \item Calculez le débit en termes de bits par seconde qu'il faudrait avoir pour transmettre une telle vidéo.
-            \item Déterminez le nombre de symboles par secondes qui peut passer dans la bande passante.
-            \item Déterminer la taille de constellation requise pour que le signal puisse transmettre la vidéo.
-            \item Refaites les calculs pour une vidéo en noir et blanc.
-        \end{enumerate}
+        Pour finir, on peut trouver la puissance minimale à l'émission afin d'obtenir un signal supérieur ou égal à \SI{-75}{\decibel\meter} à l'antenne réceptrice :
+        \begin{equation}
+            -75 \leq P_t\Big|_{\si{\decibel\meter}} + 17 - 4.95 + 2 - 110.5
+        \end{equation}
         
-        \begin{figure}[H]
-            \pgfmathsetmacro{\T}{1}
-            \pgfmathsetmacro{\bbeta}{.2}
-            \pgfmathsetmacro{\fplus}{(1+\bbeta)/(2*\T)}
-            \pgfmathsetmacro{\fminus}{(1-\bbeta)/(2*\T)}
-            \pgfmathsetmacro{\pitb}{180*\T/\bbeta}
-            \centering
-            \begin{tikzpicture}[
-                declare function={ srrc(\f) = 
-                (abs(\f) <= \fminus) * 1 +
-                and(abs(\f) > \fminus, abs(\f) <= \fplus) * 0.5 * (1 + cos(\pitb * (abs(\f) - \fminus)))
-                ; }
-            ]
-                \begin{axis}[
-                    grid,
-                    grid style={gray!50},
-                    grid=both,
-                    xlabel={$fT$},
-                    ylabel={$U(f)$},
-                ]
-                    \addplot[ultra thick, red, domain=-1:1]{sqrt(abs(srrc(x)))};
-                \end{axis}
-            \end{tikzpicture}
-            \caption{Contenu fréquentiel du filtre de mise en forme SRRC de roll-off $\alpha=0.2$.}
-            \label{fig:srrc}
-        \end{figure}
+        On trouve $P_t \geq \SI{21.4}{\decibel\meter}$.
         
-    \end{exercice}
         
-    \begin{reponse}
-        \begin{enumerate}
-            \item Le débit en bits s'obtient aisément : $320\cdot180\cdot3\cdot8\cdot30= \num{41.472e6}$ bits par seconde.
-            \item Pour calculer le débit en symboles, il faut résoudre pour $\frac{1}{T}$
-            \begin{equation}
-                \frac{1+\alpha}{T} = \SI{10}{\mega\hertz},
-            \end{equation}
-            et l'on trouve alors $\frac{1}{T} = \frac{\num{10e6}}{1 + \alpha}= \SI{8.3}{\mega\hertz}$.
-            \item La taille de la constellation est $2^N$ avec $N$ le nombre de bits par symbole. Afin d'avoir le débit nécessaire, on doit prendre le plus petit entier $N$ tel que
-            \begin{equation}
-                N \ge \frac{\num{41.472e6}}{\num{8.3e6}} = 4.98
-            \end{equation}
-            
-            On choisit donc 5 bits par symboles. La constellation a donc une taille de 32 éléments.
-            \item Le débit requis est réduit d'un facteur 3, il faut donc 2 bits par symbole (on arrondit au-dessus).
-        \end{enumerate}
     \end{reponse}
+        
+   
 
 \end{document}

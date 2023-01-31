@@ -1,7 +1,7 @@
 \documentclass [a4paper, 11pt] {article}
 
-\newcommand\seancetitle{Encodage}
-\newcommand\seancenumber{3}
+\newcommand\seancetitle{Modulation}
+\newcommand\seancenumber{2}
 \def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
 
 \input{preamble.tex}
@@ -13,362 +13,384 @@
     
     \part*{Rappel}
     
-    \paragraph{Attention :} \textit{dans les exercices suivants, les opérations sont effectuées modulo 2. Le résultat est soit 0, soit 1. On aura donc que $1 + 1 = 0$, $1+1+1 =1$, $1+1+1 +1 =0$, etc.}
+    Le rôle d'un système de communications est de transmettre de l'information, aussi appelée signal en bande de base, au travers d'un canal. Le terme \say{bande de base} fait référence aux fréquences présentes dans le signal d'origine. Afin de transmettre le signal d'un endroit à un autre, il est commun de moduler ce dernier afin de décaler sa fréquence autour d'une porteuse $f_c$.
     
-    \subsection*{Code correcteur}
-    
-    Lors de la transmission d'un message, il n'est pas rare d'observer une déformation du message lors de son chemin. De ce fait, l'information reçue peut ne contenir que de manière partielle le message original.
-    
-    En anticipation à ce problème, le message est alors envoyé sous une forme encodée, souvent plus longue, afin d'augmenter le taux de réussite quant à la bonne réception du message. De manière générale, on utilise \textbf{un dictionnaire} permettant d'encoder un message de $k$ bits sur $n$ bits. On définit le \textbf{taux du code} comme étant alors $\frac{k}{n}$.
+    \paragraph{Modulation en amplitude} Le cas le plus simple de modulation est la modulation en amplitude (AM). Le signal en bande de base $m(t)$ est multiplié par une porteuse $c(t)$ : $s(t) = c(t)\cdot m(t)$. En prenant
+    \begin{equation}
+        c(t) = A_c \cos(2\pi f_c t),
+    \end{equation}
+    où $f_c$ est la fréquence porteuse, on déplace le contenu fréquentiel du signal $m(t)$ en le copiant autour des fréquences $-f_c$ et $f_c$ (voir \autoref{fig:am}). Dans le cas d'un signal à bande limitée, on définit sa largeur de bande, $B_T$, comme étant la différence entre sa plus haute et sa plus basse fréquence. Ici, $B_T = 2W$.
     
     \begin{figure}[H]
         \centering
-        \begin{equation*}
-            \begin{matrix}
-                00 \rightarrow \\
-                01 \rightarrow\\
-                10 \rightarrow\\
-                11 \rightarrow\\
-            \end{matrix}
-            \begin{bmatrix}[cccccc]
-               1 & 0 &  1 &  0 &  1 &  0 \\
-               1 & 1 &  1 &  1 &  1 &  1\\
-               0 & 0 &  0 &  0 &  0 &  0\\
-               0 & 1 &  0 &  1 &  0 &  1\\
-            \end{bmatrix}
-        \end{equation*}
-        \caption{Dictionnaire d'encodage d'un message de 2 bits sur 6 bits.}
-        \label{fig:encodage}
+        \begin{tikzpicture}
+            \pgfmathsetmacro{\W}{1};
+            \pgfmathsetmacro{\H}{1.5};
+            \pgfmathsetmacro{\Hbis}{0.7 * \H};
+            \pgfmathsetmacro{\fc}{2};
+            \pgfmathsetmacro{\dx}{.5};
+            \pgfmathsetmacro{\dy}{1};
+            \coordinate (W1) at (0,0);
+            \draw[->] (W1) ++(-\dx,0) 
+            -- ++(\dx,0) 
+            -- ++({2*\W},0) coordinate (S1) 
+            -- ++({2*\W},0) 
+            -- ++(\dx,0) node[right] {$f$};
+            \draw[->] (S1) -- ++(0,\H) -- ++(0,\dy) node[above,anchor=south east] {$M(f)$};
+            \draw[ultra thick,red] (W1) 
+            -- ++(\W,0) node[below] {$-W$} 
+            -- ++(\W,\H) node[above,anchor=south west] {$M(0)$} coordinate (N1)
+            -- ++(\W,-\H) node[below] {$W$}
+            -- ++(\W,0) coordinate (E1);
+            
+            \path (E1) ++(2, 0) coordinate (W2);
+            \draw[->] (W2) ++(-\dx,0) 
+            -- ++(\dx,0) 
+            -- ++({2*\W},0) node[below,text=red] {$-f_c$}
+            -- ++(\fc,0) coordinate (S2) 
+            -- ++(\fc,0) node[below,text=red] {$f_c$}
+            -- ++({2*\W},0)
+            -- ++(\dx,0) node[right] {$f$};
+            \draw[->] (S2) -- ++(0,\H) -- ++(0,\dy) node[above,anchor=south east] {$S(f)$};
+            \path (S2) -- ++(\fc,0) -- ++(-\W,0) coordinate (startW);
+            \draw[ultra thick,red] (W2)
+            -- ++(\W,0) coordinate (A) % node[below] {$-f_c-W$} 
+            -- ++(\W,\Hbis) % node[above,anchor=south west] {$\frac{A_c}{2}$}
+            -- ++(\W,-\Hbis) coordinate (B) % node[below] {$-f_c+W$}
+            -- (startW) coordinate (C) % node[below] {$f_c-W$} 
+            -- ++(\W,\Hbis) % node[above,anchor=south west] {$\frac{A_c}{2}$}
+            -- ++(\W,-\Hbis) coordinate (D) % node[below] {$f_c+W$}
+            -- ++(\W,0);
+            
+            \path (A) -- ++(0,-1) coordinate (V);
+            
+            \draw[|-|,ultra thick,red] (A |- V) -- (B |- V) node[midway,below] {$2W$};
+            \draw[|-|,ultra thick,red] (C |- V) -- (D |- V) node[midway,below] {$2W$};
+            
+        \end{tikzpicture}
+        \caption{Modulation en amplitude : contenu fréquentiel.}
+        \label{fig:am}
     \end{figure}
     
-    \textbf{La distance minimale} d'un code, notée $d_{min}$, est la plus petite distance entre deux mots du dictionnaire. La distance entre deux mots, aussi appelée distance de Hamming, est le nombre de bits différents entre ces deux mots. Dans l'exemple de la \autoref{fig:encodage}, la distance minimale est de 3 bits.
-    
-    Un code dont la distance minimale vaut $d_{min}$ détecte $d_{min}-1$ erreurs et peut corriger $\lfloor\frac{d_{min}-1}{2} \rfloor$ erreurs, où $\lfloor \cdot \rfloor$ est l'arrondi vers le bas. Ceci définit la \textbf{capacité correctrice} d'un code.
-    
-    Le décodage d'un bloc reçu se fait en recherchant le mot le plus proche de ce dernier en termes de distance. Exemple pour la \autoref{fig:encodage} :
+    \paragraph{Modulation en fréquence} La modulation en fréquence (FM) consiste à envoyer un signal $s(t)$ dont la fréquence instantanée varie linéairement avec le message $m(t)$ :
     \begin{equation}
-        \begin{bmatrix}
-            1 & 0 & 1 & 1 & 1 & 0
-        \end{bmatrix}
-        \longrightarrow
-        \begin{bmatrix}
-            1 & 0 & 1 & \color{red} 0 & 1 & 0
-        \end{bmatrix}
-        \longrightarrow 00
+        f_i(t) = f_c + k_f m(t),
+    \end{equation}
+    avec $k_f$ la sensibilité en \si{\hertz\per\volt}. Le produit $k_f m(t)$ indique la déviation instantanée de fréquence, et sa valeur maximale est $f_d=k_f A_m$, avec $A_m$ l'amplitude du signal en bande de base.
+    
+    En intégrant la fréquence pour obtenir la phase\footnote{Pour rappel, la fréquence instantanée est donnée par la dérivée de la phase : $f_i(t) = \frac{1}{2\pi}\frac{d\theta_i (t)}{dt}$.}, on trouve l'expression du signal modulé :
+    \begin{equation}
+        s(t) = A_c \cos \left[2\pi f_c t + 2\pi k_f \int\limits_0^t m(\tau)d\tau \right].
     \end{equation}
     
-    Un \textbf{code de Hamming} est un code correcteur linéaire qui permet la détection d'une erreur si elle n'est présente que sur une lettre du message. Les codes linéaires peuvent être complètement représenté par une \textbf{matrice génératrice} $\doubleunderline{G}$ de taille $k \times n$. Cette matrice s'obtient en assemblant les mots de codes correspondant à la base canonique\footnote{1000, 0100, 0010 et 0001 dans le cas d'un mot d'information de 4 bits.}. À partir de n'importe quel mot d'information $\underline{i}$, on peut calculer son mot de code, $\underline{c}$, en effectuant le produit matriciel $\underline{c} = \underline{i} \; \doubleunderline{G}$.
+    On définit l'indice de modulation $\beta=\frac{f_d}{W}$. La bande passante du signal modulé est donné par la formule de Carson:  $B_T \approx 2\left(f_d + W\right) = 2f_d \left(1 + \frac{1}{\beta}\right)=2W(1+\beta)$.
     
-    \pagebreak
     \pagestyle{nextpages}
     
-    On définit alors la \textbf{matrice de contrôle} $H$. Cette dernière est plus complexe à calculer dans un cas général. Néanmoins, lorsque la matrice $\doubleunderline{G}$ a une structure particulière formée d'une sous-matrice identité (ici représentée en noir sur la \autoref{fig:generatrice_encodage_hamming_7_4}) accolée à une autre sous-matrice (ici représentée en \textcolor{blue}{bleu}), dans ce cas, la matrice de parité  peut s'obtenir en transposant la partie \textcolor{blue}{bleue} de la matrice $\doubleunderline{G}$ et en y ajoutant une sous-matrice identité à droite pour compléter une matrice de taille $(n-k) \times n$. C'est le cas notamment pour la matrice du code de Hamming (voir ci-dessous).
+    \paragraph{Modulation digitale} Jusqu'ici, les signaux considérés étaient continus. Dans le cas de signaux discrets (imaginez envoyer un signal en code Morse toutes les secondes), il est utile d'appliquer une modulation digitale. Le message est une séquence de symboles complexes, $I(n)$, appartenant à une constellation donnée. \textit{Une constellation} est simplement une association entre un groupe de bits et un nombre dans le plan complexe. Un exemple de constellation très simple serait d'associer le bit 1 à la valeur $1+0j$ et le bit 0 à la valeur $-1+0j$ (voir \autoref{fig:const_1}). Ensuite, les symboles passent dans un filtre de mise en forme, $u(t)$, afin d'obtenir un signal continu :
+    \begin{equation}
+        x(t) = \sum\limits_{n=0}^{\infty}I(n) u(t-nT),
+    \end{equation}
+    où $T$ est la durée d'un symbole (ou l'espace entre deux symboles).
     
-    Pour un bloc reçu $\underline{c}$, le vecteur syndrome est donné par $\underline{s} = \underline{c} \; \doubleunderline{H}^T$.  Il indique la présence ou non d'erreur(s) :  le vecteur nul indique l'absence d'erreurs.
+    Comme $x(t)$ est complexe, il est commun de noter sa partie réelle $I$ (pour \say{In phase})
+    \begin{equation}
+        x_I(t) = \Re \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\},
+    \end{equation}
+    et sa partie imaginaire $Q$ (pour \say{in Quadrature})
+    \begin{equation}
+        x_Q(t) = \Im \left\{\sum\limits_{n=0}^{\infty}I(n) u(t-nT) \right\}.
+    \end{equation}
     
+    Enfin, ce signal est ensuite modulé pour obtenir
+    \begin{equation}
+        x_{RF} = x_I(t) \cos(2\pi f_c t) + x_Q(t)\sin(2\pi f_c t).
+    \end{equation}
+    
+    \begin{minipage}[[b]{.49\textwidth}
     \begin{figure}[H]
         \centering
-        \begin{equation*}
-            \begin{matrix}
-               0000 \rightarrow \\
-               0001 \rightarrow \\
-               0010 \rightarrow \\
-               0011 \rightarrow \\
-               0100 \rightarrow \\
-               0101 \rightarrow \\
-               0110 \rightarrow \\
-               0111 \rightarrow \\
-            \end{matrix}
-            \begin{bmatrix}[ccccccc]
-               0 & 0 & 0 & 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0 \\
-               0 & 0 & 0 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
-               0 & 0 & 1 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
-               0 & 0 & 1 & 1 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
-               0 & 1 & 0 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
-               0 & 1 & 0 & 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
-               0 & 1 & 1 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
-               0 & 1 & 1 & 1 & \color{blue} 0 & \color{blue} 0 & \color{blue} 0 \\
-            \end{bmatrix}
-            \hspace{.3cm}\&\hspace{.4cm}
-            \begin{matrix}
-               1000 \rightarrow \\
-               1001 \rightarrow \\
-               1010 \rightarrow \\
-               1011 \rightarrow \\
-               1100 \rightarrow \\
-               1101 \rightarrow \\
-               1110 \rightarrow \\
-               1111 \rightarrow \\
-            \end{matrix}
-            \begin{bmatrix}[ccccccc]
-               1 & 0 & 0 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
-               1 & 0 & 0 & 1 & \color{blue} 0 & \color{blue} 0 & \color{blue} 1 \\
-               1 & 0 & 1 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 0 \\
-               1 & 0 & 1 & 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 \\
-               1 & 1 & 0 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 0 \\
-               1 & 1 & 0 & 1 & \color{blue} 1 & \color{blue} 0 & \color{blue} 0 \\
-               1 & 1 & 1 & 0 & \color{blue} 0 & \color{blue} 0 & \color{blue} 1 \\
-               1 & 1 & 1 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
-            \end{bmatrix}
-        \end{equation*}
-        \caption{Dictionnaire du code de Hamming (7,4).}
-        \label{fig:encodage_hamming_7_4}
+        \begin{tikzpicture}
+            \begin{axis}[
+                grid,
+                grid style={gray!50},
+                grid=both,
+                xlabel={$I$},
+                ylabel={$Q$},
+                axis equal image,
+                ymin=-1.4,ymax=1.4,
+                xmin=-1.4,xmax=1.4,
+            ]
+                \draw (axis cs:0,0) circle [blue, radius=1];
+                \node [circle,draw=black,fill=red,label=right:{\textbf{1}}] at (axis cs:1,0) {};
+                \node [circle,draw=black,fill=red,label=left:{\textbf{0}}] at (axis cs:-1,0) {};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Constellation (BPSK).}
+        \label{fig:const_1}
     \end{figure}
-    
+    \end{minipage}
+    \begin{minipage}[[b]{.49\textwidth}
     \begin{figure}[H]
         \centering
-        \begin{equation*}
-            \doubleunderline{G} =
-            \begin{bmatrix}[ccccccc]
-               1 & 0 & 0 & 0 & \color{blue} 1 & \color{blue} 1 & \color{blue} 1 \\
-               0 & 1 & 0 & 0 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 \\
-               0 & 0 & 1 & 0 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 \\
-               0 & 0 & 0 & 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 \\
-            \end{bmatrix}
-            \hspace{.7cm}
-            \doubleunderline{H} =
-            \begin{bmatrix}[ccccccc]
-               \color{blue} 1 & \color{blue} 1 & \color{blue} 0 & \color{blue} 1 & 1 & 0 & 0 \\
-               \color{blue} 1 & \color{blue} 0 & \color{blue} 1 & \color{blue} 1 & 0 & 1 & 0 \\
-               \color{blue} 1 & \color{blue} 1 & \color{blue} 1 & \color{blue} 0 & 0 & 0 & 1 \\
-            \end{bmatrix}
-        \end{equation*}
-        \caption{Matrice génératrice et matrice de contrôle du code de Hamming (7,4).}
-        \label{fig:generatrice_encodage_hamming_7_4}
+        \begin{tikzpicture}
+            \begin{axis}[
+                grid,
+                grid style={gray!50},
+                grid=both,
+                xlabel={$I$},
+                ylabel={$Q$},
+                axis equal image,
+                ymin=-1.4,ymax=1.4,
+                xmin=-1.4,xmax=1.4,
+            ]
+                \draw (axis cs:0,0) circle [blue, radius=1];
+                \node [circle,draw=black,fill=red,label=right:{\textbf{11}}] at (axis cs:{cos(45)},{sin(45)}) {};
+                \node [circle,draw=black,fill=red,label=right:{\textbf{10}}] at (axis cs:{cos(45)},{-sin(45)}) {};
+                \node [circle,draw=black,fill=red,label=left:{\textbf{00}}] at (axis cs:{-cos(45)},{-sin(45)}) {};
+                \node [circle,draw=black,fill=red,label=left:{\textbf{01}}] at (axis cs:{-cos(45)},{sin(45)}) {};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Constellation (QPSK).}
+        \label{fig:const_2}
     \end{figure}
-    
-    \subsection*{Compression des données}
-    
-    Souvent, on souhaite réduire la taille des messages envoyés afin qu'ils soient transmis plus rapidement ou prennent moins de place sur un espace de stockage. Pour ce faire, les données sont compressées en utilisant un algorithme de codage. C'est le cas des fichiers \py{.zip} ou encore du codage de Huffman. Ce dernier est décrit dans les slides du cours et un exemple détaillé est disponible sur la page \href{https://fr.wikipedia.org/wiki/Codage_de_Huffman#Principe}{Wikipédia}.
-    
-    Le code de Huffman se base sur une distribution connue des symboles afin de créer un code de compression. Le code de compression se présente sous forme d'un arbre où prendre une branche à gauche indique un 0 et une branche à droite un 1. Ci-dessous, l'arbre obtenu pour la phrase \say{this is an example of a huffman tree}, pour lequel le code final est : \{'e' : 000, 'a' : 010, ' ' : 111, ...\}.
-    
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=.5\textwidth]{imgs/Huffman_tree_2.pdf}
-        \caption{Arbre d'Huffman, repris de Wikipédia.}
-        \label{fig:huffman}
-        \vspace{-2cm}
-    \end{figure}
-    
-    \pagebreak
-    \pagestyle{nextpages}
-    
-    
+    \end{minipage}
     
     \pagebreak
     \part*{Exercices}
     
-    \begin{exercice}[Dictionnaire d'un code]{1}
-        
-        À partir du code suivant :
-        
-        \begin{equation*}
-            \begin{matrix}
-                00 \rightarrow \\
-                01 \rightarrow\\
-                10 \rightarrow\\
-                11 \rightarrow\\
-            \end{matrix}
-            \begin{bmatrix}[ccccccc]
-               0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-               1 & 0 & 0 & 1 & 1 & 0 & 1\\
-               0 & 1 & 1 & 0 & 1 & 0 & 1\\
-               1 & 1 & 1 & 1 & 0 & 0 & 0\\
-            \end{bmatrix}
-        \end{equation*}
-      
-        \begin{enumerate}
-            \item Calculez le taux du code.
-            \item Effectuez le décodage du bloc reçu suivant : $y = \begin{bmatrix}
-               1 & 0 & 1 & 1 & 1 & 1 & 1
-            \end{bmatrix}$.
-            \item Quelle est la capacité correctrice du code ?
-            \item Il s'agit d'un code linéaire. Quelle est la taille de sa matrice de contrôle ?
-        \end{enumerate} 
-    \end{exercice}
-    
-    \begin{reponse}
-        Le code présenté encode 2 bits ($k$) sur 7 bits ($n$).
+    \begin{exercice}[Modulation AM]{1}
+        Un signal $m(t)$ est modulé en modulation d'amplitude autour d'une fréquence porteuse $f_c=\SI{900}{\kilo\hertz}$.
         
         \begin{enumerate}
-            \item Le taux est donc de $\frac{2}{7}$.
-            \item Le code le plus proche de $y$ est $\begin{bmatrix}
-               1 & 0 & \color{red} 0 & 1 & 1 & \color{red} 0 & 1
-            \end{bmatrix}$, ce qui correspond au mot 01.
-            \item On calcule que la distance minimale est de 4. La capacité correctrice est donc de 1. C'est le nombre minimum d'erreurs que l'on peut corriger : pas maximum. Sinon, on n'aurait pas pu corriger $y$.
+            \item Donnez l'expression du signal modulé $s(t)$ en fonction de $m(t)$.
+            \item Représentez le contenu fréquentiel de $s(t)$ étant donné le contenu fréquentiel de $m(t)$ (voir \autoref{fig:freq_am}).
         \end{enumerate}
-    \end{reponse}
-    
-    \begin{exercice}[Code de Hamming]{2}
         
-        Considérez le code de Hamming (7,4) et répondez aux questions suivantes :
-      
-        \begin{enumerate}
-            \item Calculez le mot codé pour les bits d'entrée 1101.
-            \item Quel est le taux de ce code ?
-            \item Quelle est la distance minimale du code ?
-            \item Calculez le syndrome du code 1111110.
-            \item Quel est le mot à l'origine du code 1001101 ?
-            \item Quel est le mot à l'origine du code 0000110 ?
-        \end{enumerate} 
-    \end{exercice}
-    
-    \begin{reponse}
-        Pour répondre aux questions, il est utile de relire le rappel.
-        \begin{enumerate}
-            \item 1101 devient 1101100.
-            \item Le taux est de $\frac{4}{7}$.
-            \item La distance minimale est de 3.
-            \item Le syndrome de $\underline{c}=1111110$ est $\underline{s} = \underline{c} \times \doubleunderline{H}^T=001$.
-            \item Le mot le plus proche est 1001.
-            \item Le mot le plus proche est 0001.
-        \end{enumerate}
-    \end{reponse}
-    
-    \begin{exercice}[Code de Huffman]{3}
-      
-        \begin{enumerate}
-            \item Parmi les codes suivants, lesquels \textbf{ne sont pas} des codes de Huffman ?
-            \begin{enumerate}
-                \item \{1, 01, 00\}
-                \item \{01, 11, 10\}
-                \item \{00, 01, 10, 110\}
-                \item \{0, 1, 01, 11\}
-            \end{enumerate}
-            \item On considère une source d’information, ayant 5 valeurs possibles, avec les probabilités données ci-dessous. On considère aussi deux encodages possibles $C_1$ et $C_2$ :
-            \begin{center}
-            \begin{tabular}{c|c|ll}
-                 $x$ & $p(x)$ & $C_1$ & $C_2$ \\
-                 \hline
-                 a & 0.50 & 0 & 01\\
-                 b & 0.15 & 10 & 00\\
-                 c & 0.15 & 110 & 10\\
-                 d & 0.10 & 1110 & 110\\
-                 e & 0.10 & 1111 & 111\\
-            \end{tabular}
-            \end{center}
-            Quel code fournit la meilleure compression d'information ?
-            \item Construisez l'arbre de Huffman pour la phrase \say{Ésope reste ici et se repose}.
-        \end{enumerate} 
-    \end{exercice}
-    
-    \begin{reponse}
-        \begin{enumerate}
-            \item Pour vérifier si un code est valide, il faut tracer un arbre et vérifier que chaque feuille possède une paire. Par exemple, si le code 01 existe, alors le code 00 ou ses deux feuilles doivent exister. Une feuille (un code) ne peut pas posséder de sous-feuille.
-            \begin{enumerate}
-                \item Code de Huffman.
-                \item Non valide, car 01 n'a pas sa paire.
-                \item Non valide, car 110 n'a pas sa paire.
-                \item Non valide, car 0 et 1 sont des feuilles et ne peuvent donc pas avoir de sous-feuille.
-            \end{enumerate}
-            \item Pour estimer la compression de chaque code, on peut calculer le nombre de bits moyen et comparer :
-            \begin{align*}
-                \overline{C}_1 &= 0.50 \cdot 1 + 0.15 \cdot 2 + 0.15 \cdot 3 + 0.10 \cdot 4 + 0.10 \cdot 4 = 2.05\\
-                \overline{C}_2 &= 0.50 \cdot 2 + 0.15 \cdot 2 + 0.15 \cdot 2 + 0.10 \cdot 3 + 0.10 \cdot 3 = 2.20
-            \end{align*}
-            Le premier code est donc légèrement meilleur.
-            \item Voici un exemple d'arbre que vous pouvez obtenir. Des variations sont possibles, car plusieurs lettres apparaissent le même nombre de fois.
-            \begin{center}
-                \begin{tikzpicture}[iv/.style={draw,fill=red!50,circle,minimum size=20pt,inner sep=0pt,text=black},ev/.style={draw,fill=yellow,rectangle,minimum size=20pt,inner sep=2pt,text=black}]
-                \node[iv]{28}
-                  child {
-                    node[iv]{12}
-                    child {
-                        node[ev]{espace(5)}
-                        }
-                    child [missing]
-                    child {
-                        node[iv]{7}
-                        child {
-                            node[iv]{3}
-                            child {
-                                node[ev]{C(1)}
-                            }
-                            child {
-                                node[ev]{O(2)}
-                            }
-                        }
-                        child [missing]
-                        child {
-                            node[iv]{4}
-                            child {
-                                node[ev]{T(2)}
-                            }
-                            child {
-                                node[ev]{I(2)}
-                            }
-                        }
-                    }
-                    edge from parent node[above]{0}        
-                }
-                child [missing]
-                child [missing]
-                child [missing]
-                child [missing]
-                child {
-                    node[iv]{16}
-                    child {
-                        node[iv]{8}
-                        child {
-                            node[iv]{4}
-                            child {
-                                node[ev]{P(2)}
-                            }
-                            child {
-                                node[ev]{R(2)}
-                            }
-                        }
-                        child {
-                            node[ev]{S(4)}
-                        }
-                    }
-                    child {
-                        node[ev]{E(8)}
-                        }
-                    edge from parent node[above]{1}        
-                };
-                \end{tikzpicture}
-            \end{center}
-        \end{enumerate}
-    \end{reponse}
-    
-    \begin{exercice}[Planning de fréquence]{4 (bonus)}
-        On veut établir le planning de fréquence d’un réseau cellulaire. En raison de différents effets de propagation, on suppose que la densité de puissance reçue à une distance $r$ ($r >\SI{10}{\meter}$) d’une station de base est approximée par
-        \begin{equation}
-            S(r) = \frac{P_0}{r^3},
-        \end{equation}
-        où $P_0$ est la puissance de l’antenne (supposée identique pour toutes les stations de base). Pour simplifier, on suppose que toutes les cellules sont des cercles de \SI{1}{\kilo\meter} de rayon centrés sur leur station de base respective. Quelle doit être la distance minimale entre 2 stations de base réutilisant la même fréquence, de façon à ce que signal utile en provenance de la première station de base soit toujours au minimum \SI{20}{\decibel} au-dessus de l’interférence en provenance de la deuxième station de base ?
-    \end{exercice}
-    
-    \begin{reponse}
-        Afin de répondre à l'exercice, il est utile de faire un petit dessin, voir la \autoref{fig:planning}. L'utilisateur (en \textcolor{red}{rouge}), souhaite donc recevoir un signal de la part de $TX_1$ au minimum \SI{20}{\decibel} au-dessus de $TX_2$.
-        
-        Le pire cas de figure est celui illustré : l'utilisateur est en bordure de zone ($d_1=\SI{1}{\kilo\meter}$) et se trouve au plus proche de $TX_2$.
         \begin{figure}[H]
             \centering
             \begin{tikzpicture}
-                \pgfmathsetmacro{\onekm}{2}
-                \coordinate (A1) at (0,0);
-                \filldraw [very thick,draw=black,dashed,fill=gray!20] (A1) circle (\onekm);
-                \node[circle,draw,fill,label=above:{$TX_1$}] (N1) at (A1) {};
-                \path (A1) -- ++(2.5*\onekm,0) coordinate (A2);
-                \filldraw [very thick,draw=black,dashed,fill=gray!20] (A2) circle (\onekm);
-                \node[circle,draw,fill,label=above:{$TX_2$}] (N2) at (A2) {};
-                \path (A1) ++ (\onekm,0) node[circle,draw=black,fill=red] (U) {};
-                \draw[|<->|,dashed] (N1) -- (U) node[midway,above] {$d_1$};
-                \draw[|<->|,dashed] (U) -- (N2) node[midway,above] {$d_2$};
+                \begin{axis}[
+                    grid,
+                    grid style={gray!50},
+                    grid=both,
+                    xlabel={$f (\si{\kilo\hertz})$},
+                    ylabel={$M(f)$},
+                ]
+                    \addplot[ultra thick, red, smooth] plot coordinates
+                    {
+                        (-2,0)
+                        (-1, .3)
+                        (0,1)
+                        (4,0)
+                    };
+                \end{axis}
             \end{tikzpicture}
-            \caption{Schéma du problème.}
-            \label{fig:planning}
+            \caption{Contenu fréquentiel de $m(t)$.}
+            \label{fig:freq_am}
         \end{figure}
         
-        La distance $d_1=1$ km. On veut aussi que le rapport des puissances soit de \SI{20}{\decibel}, c.-à-d. un rapport de 100 :
-        \begin{equation}
-            \frac{S_1}{S_2} = 100 = \frac{d_2^3}{d_1^3} \Rightarrow d_2 = \SI{4.64}{\kilo\meter}.
-        \end{equation}
-        La distance entre les deux antennes doit donc être de \SI{5.64}{\kilo\meter}.
+    \end{exercice}
+    
+    \begin{reponse}
         
+        \begin{enumerate}
+            \item On substitue pour obtenir $s(t) = A_c m(t) \cos(2\pi \cdot \num{900e3} t)$.
+            \item Le contenu fréquentiel de $s(t)$ est simplement celui de $m(t)$, recopié autour de $-f_c$ et $f_c$, et multiplié par $\frac{A_c}{2}$ :
+            \begin{equation}
+                S(f) = \frac{A_c}{2} \left[M(f-f_c) + M(f+f_c) \right].
+            \end{equation}
+        \end{enumerate}
+        
+    \end{reponse}
+    
+    \begin{exercice}[Modulation FM]{2}
+    
+        \begin{enumerate}
+            \item Un modulateur FM réalise une déviation maximale de \SI{30}{\kilo\hertz} et présente une sensibilité de \SI{4}{\kilo\hertz\per\volt}. Déterminez l'amplitude maximale du signal modulant en entrée.
+            \item Un signal modulant de \SI{10}{\volt} produit une déviation de fréquence de \SI{75}{\kilo\hertz} à la sortie d'un modulateur FM. Déterminez la sensibilité de celui-ci et la déviation de fréquence qui serait provoquée par un signal modulant de \SI{2}{\volt}. Toujours pour le même modulateur FM avec la même sensibilité, calculez la bande occupée par le signal modulé ainsi que l'indice de modulation si le signal modulant a une amplitude maximale de \SI{10}{\volt} et une fréquence maximale de \SI{15}{\kilo\hertz}, .
+            \item Comparez la largeur de bande calculée ci-dessus à celle nécessaire si le même signal était modulé en AM.
+        \end{enumerate}
+        
+    \end{exercice}
+    
+    \begin{reponse}
+        \begin{enumerate}
+            \item En prenant la définition de la déviation maximale $f_d$ et en isolant $A_m$, on trouve :
+            \begin{equation}
+                A_m = \frac{f_d}{k_f} = \frac{\num{30e3}}{\num{4e3}} = \SI{7.5}{\volt}.
+            \end{equation}
+        \item \begin{enumerate}
+                \item \label{enum:fd}
+                Si $A_m=\SI{10}{\volt}$, alors
+                \begin{equation}
+                    k_f = \frac{\num{75e3}}{10} = \SI{7.5}{\kilo\hertz\per\volt}.
+                \end{equation}
+                \item Si $A_m=\SI{2}{\volt}$, alors
+                \begin{equation}
+                    f_d = 2 \cdot \num{7.5e3} = \SI{15}{\kilo\hertz}.
+                \end{equation}
+                \item Pour ce signal, la déviation de fréquence est de 75 kHz (voir \ref{enum:fd}). De ce fait
+                \begin{equation}
+                    \beta = \frac{\num{75e3}}{\num{15e3}}=5.
+                \end{equation}
+                et la bande occupée est donnée par $B_T=2W (1+5) = 180$ kHz.
+            \end{enumerate}
+        \end{enumerate}
+    \end{reponse}
+    
+    \begin{exercice}[Modulation digitale]{3}
+        On considère une modulation digitale linéaire utilisant le filtre de mise en forme décrit sur la \autoref{fig:shape_filter}. On envoie la séquence de symboles suivante : $I(0) = 1 + j$, $I(1) = j$ et $I(2) = -1$.
+        
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                \begin{axis}[
+                    grid,
+                    grid style={gray!50},
+                    grid=both,
+                    xlabel={$t/T$},
+                    ylabel={$u(t)$},
+                    ymin=0,ymax=1.2,
+                    xmin=-3,xmax=3,
+                ]
+                    \draw[ultra thick, red] (axis cs:-3,0) 
+                    -- (axis cs:-2,0)
+                    -- (axis cs:0,1)
+                    -- (axis cs:2,0)
+                    -- (axis cs:3,0);
+                \end{axis}
+            \end{tikzpicture}
+            \caption{Filtre de mise en forme triangulaire.}
+            \label{fig:shape_filter}
+        \end{figure}
+        
+        \begin{enumerate}
+            \item Représentez les signaux $I$ et $Q$ avant la modulation autour de la porteuse.
+            \item Ces signaux souffriront-ils d'interférence entre symboles ? Si oui, évaluez l'interférence dont souffre le symbole $I(0)$ pour la séquence envoyée.
+        \end{enumerate}
+    \end{exercice}
+    
+    \begin{reponse}
+    
+        \begin{enumerate}
+            \item Les signaux $I$ et $Q$ s'obtiennent assez simplement en sommant plusieurs versions décalées de $u(t)$, chacune multipliée par son symbole correspondant.
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                    \begin{axis}[
+                        grid,
+                        grid style={gray!50},
+                        grid=both,
+                        xlabel={$t/T$},
+                        ylabel={$x_I(t)$},
+                        ymin=-1.2,ymax=1.2,
+                        xmin=-3,xmax=5,
+                    ]
+                        \draw[ultra thick, red] (axis cs:-3,0) 
+                        -- (axis cs:-2,0)
+                        -- (axis cs:0,1)
+                        -- (axis cs:2,-1)
+                        -- (axis cs:4,0)
+                        -- (axis cs:5,0);
+                    \end{axis}
+                \end{tikzpicture}
+                \caption{Signal I.}
+                \label{fig:i}
+            \end{figure}
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                    \begin{axis}[
+                        grid,
+                        grid style={gray!50},
+                        grid=both,
+                        xlabel={$t/T$},
+                        ylabel={$x_Q(t)$},
+                        ymin=0,ymax=2.2,
+                        xmin=-3,xmax=5,
+                    ]
+                        \draw[ultra thick, red] (axis cs:-3,0) 
+                        -- (axis cs:-2,0)
+                        -- (axis cs:-1,.5)
+                        -- (axis cs:0,1.5)
+                        -- (axis cs:1,1.5)
+                        -- (axis cs:2,.5)
+                        -- (axis cs:3,0)
+                        -- (axis cs:4,0)
+                        -- (axis cs:5,0);
+                    \end{axis}
+                \end{tikzpicture}
+                \caption{Signal Q.}
+                \label{fig:q}
+            \end{figure}
+            \item Comme $x_Q(t)$ n'est pas égal à 1, il y a bien interférence en $t=0$. Pour quantifier l'interférence, on va comparer le signal reçu en $t=0$ avec $I(0)$. La valeur reçue vaut $1+1.5j$ alors que $I(0)=1+j$. On a donc une erreur de $0.5j$. On peut identifier que cette interférence provient du symbole $I(1)$ multiplié par la valeur du filtre de mise en forme prise en $t=1$.
+        \end{enumerate}
+    
+    \end{reponse}
+        
+    \begin{exercice}[Modulation digitale]{4}
+        
+        Un filtre de mise en forme beaucoup plus utilisé est celui dont le contenu fréquentiel est présenté à la \autoref{fig:srrc}. Pour ce type de filtre, l'excès de bande passante, c.-à-d. le surplus de bande passante utilisé à cause du filtre, $\Delta f$, est donné, en bande de base, par :
+        \begin{equation}
+            \Delta f = \frac{\alpha}{2 T},
+        \end{equation}
+        avec $\alpha=0.2$ le facteur de roll-off et $T$ l'inverse de la fréquence de symboles. Notez que, après modulation AM, la bande occupée sera donnée par $B_T=\frac{1+\alpha}{T}$.\\
+        
+        On souhaite transmettre un signal vidéo en format $320\times180$, où chaque pixel possède trois couleurs et chaque couleur occupe 8 bits. La transmission doit se faire à un rythme de 30 images par secondes. La bande passante disponible est de \SI{10}{\mega\hertz}
+        
+        \begin{enumerate}
+            \item Calculez le débit en termes de bits par seconde qu'il faudrait avoir pour transmettre une telle vidéo.
+            \item Déterminez le nombre de symboles par secondes qui peut passer dans la bande passante.
+            \item Déterminer la taille de constellation requise pour que le signal puisse transmettre la vidéo.
+            \item Refaites les calculs pour une vidéo en noir et blanc.
+        \end{enumerate}
+        
+        \begin{figure}[H]
+            \pgfmathsetmacro{\T}{1}
+            \pgfmathsetmacro{\bbeta}{.2}
+            \pgfmathsetmacro{\fplus}{(1+\bbeta)/(2*\T)}
+            \pgfmathsetmacro{\fminus}{(1-\bbeta)/(2*\T)}
+            \pgfmathsetmacro{\pitb}{180*\T/\bbeta}
+            \centering
+            \begin{tikzpicture}[
+                declare function={ srrc(\f) = 
+                (abs(\f) <= \fminus) * 1 +
+                and(abs(\f) > \fminus, abs(\f) <= \fplus) * 0.5 * (1 + cos(\pitb * (abs(\f) - \fminus)))
+                ; }
+            ]
+                \begin{axis}[
+                    grid,
+                    grid style={gray!50},
+                    grid=both,
+                    xlabel={$fT$},
+                    ylabel={$U(f)$},
+                ]
+                    \addplot[ultra thick, red, domain=-1:1]{sqrt(abs(srrc(x)))};
+                \end{axis}
+            \end{tikzpicture}
+            \caption{Contenu fréquentiel du filtre de mise en forme SRRC de roll-off $\alpha=0.2$.}
+            \label{fig:srrc}
+        \end{figure}
+        
+    \end{exercice}
+        
+    \begin{reponse}
+        \begin{enumerate}
+            \item Le débit en bits s'obtient aisément : $320\cdot180\cdot3\cdot8\cdot30= \num{41.472e6}$ bits par seconde.
+            \item Pour calculer le débit en symboles, il faut résoudre pour $\frac{1}{T}$
+            \begin{equation}
+                \frac{1+\alpha}{T} = \SI{10}{\mega\hertz},
+            \end{equation}
+            et l'on trouve alors $\frac{1}{T} = \frac{\num{10e6}}{1 + \alpha}= \SI{8.3}{\mega\hertz}$.
+            \item La taille de la constellation est $2^N$ avec $N$ le nombre de bits par symbole. Afin d'avoir le débit nécessaire, on doit prendre le plus petit entier $N$ tel que
+            \begin{equation}
+                N \ge \frac{\num{41.472e6}}{\num{8.3e6}} = 4.98
+            \end{equation}
+            
+            On choisit donc 5 bits par symboles. La constellation a donc une taille de 32 éléments.
+            \item Le débit requis est réduit d'un facteur 3, il faut donc 2 bits par symbole (on arrondit au-dessus).
+        \end{enumerate}
     \end{reponse}
 
 \end{document}

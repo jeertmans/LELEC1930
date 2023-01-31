@@ -1,8 +1,8 @@
 \documentclass [a4paper, 11pt] {article}
 
-\newcommand\seancetitle{Lignes de transmissions}
-\newcommand\seancenumber{1}
-\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
+\newcommand\seancetitle{Transformée de Fourier}
+\newcommand\seancenumber{0}
+%\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
 
 \input{preamble.tex}
 
@@ -13,242 +13,198 @@
     
     \part*{Rappel}
     
-    Une ligne de transmission peut être modélisée comme sur la \autoref{fig:tline}, dont les paramètres sont décrits dans le \autoref{tab:tline}. Grâce à ce modèle, il est possible de calculer l'impédance de la ligne, $Z_0$, et l'exposant de propagation, $\gamma$,
-    
-    \vspace{.5cm}
-    
-    \noindent
-    \begin{minipage}{.5\linewidth}
-        \begin{equation}\label{eq:impedance}
-            Z_0 = \sqrt{\frac{R' + j \omega L'}{G' + j \omega C'}},
-        \end{equation}
-    \end{minipage}%
-    \begin{minipage}{.5\linewidth}
-        \begin{equation}
-            \gamma = \sqrt{(R' + j \omega L')(G' + j \omega C')},
-        \end{equation}
-    \end{minipage}
-    
-    \vspace{.5cm}
-    
-    \noindent
-    avec $\omega$ la pulsation en $\si{\radian\per\second}$. \textbf{Attention} à bien travailler en complexe, car $Z_0$ et $\gamma$ peuvent être complexes. La partie réelle de $\gamma$, notée $\alpha$, est la constante d'atténuation et la partie imaginaire, notée $\beta$, est la constante de phase. Finalement, la vitesse de propagation de l'onde, $v_p$, aussi appelée vitesse de phase, peut s'obtenir :
-    
+    Transformée de Fourier d'un signal $x(t)$ :
     \begin{equation}
-        v_p = \frac{\omega}{\beta}.
+        X(\omega) = \int\limits_{-\infty}^{\infty} x(t) e^{-j\omega t} dt
     \end{equation}
     
-    La constante d'atténuation, $\alpha$, permet de lier la tension d'entrée $V(z,t)$ avec la tension à la sortie $V(z+dz,t)$, après une distance $dz$ donc :
-    
+    Transformée de Fourier inverse :
     \begin{equation}
-        |V(z+dz,t)| = e^{-\alpha dz} |V(z,t)|.
+        x(t) = \frac{1}{2\pi} \int\limits_{-\infty}^{\infty} X(\omega) e^{-j\omega t} d\omega
     \end{equation}
     
+    Propriété de la transformée de Fourier : 
+    \begin{center}
+        si $x(t)$ est réel, alors $X(-\omega)=X^*(\omega)$, 
+    \end{center}
+    où $^*$ est l'opérateur conjugué, tel que $(a+b\cdot j)^*=a - b\cdot j$, avec $a$ et $b$ des nombres réels.
+    
+    \vspace{2cm}
     \begin{figure}[H]
         \centering
-        \begin{circuitikz}
-            \draw (0,0) to [short, *-] (8,0)
-            to [TL, l_=$G'dz$] (8,4)
-            to [short] (5,4)
-            (8,4) to [short, -*, i={$i(z+dz,t)$}] (10,4)
-            to [open, v^>={$v(z+dz,t)$}] (10,0)
-            to [short, *-] (5,0)
-            (0,0) to [open, v^<={$v(z, t)$}] (0,4)
-            to [short, *-,i={$i(z,t)$}] (1,4)
-            to [R, l=$R'dz$] (3,4)
-            to [L, l=$L'dz$] (5,4)
-            to [C, l=$C'dz$] (5,0);
-        \end{circuitikz}
-        \caption{Ligne de transmission.}
-        \label{fig:tline}
+        \begin{tikzpicture}
+        \begin{axis}[
+            set layers=standard,
+            domain=0:10,
+            samples y=1,
+            view={40}{20},
+            hide axis,
+            unit vector ratio*=1 2 1,
+            xtick=\empty, ytick=\empty, ztick=\empty,
+            clip=false,
+            scale=2,
+        ]
+        \def\sumcurve{0}
+        \pgfplotsinvokeforeach{0.5,1.5,...,5.5}{
+            \draw [on layer=background, gray!20] (axis cs:0,#1,0) -- (axis cs:10,#1,0);
+            \addplot3 [on layer=main, blue!30, smooth, samples=101]
+              (x,#1,{sin(#1*x*(157))/(#1*2)});
+            \addplot3 [on layer=axis foreground, very thick, blue,ycomb, samples=2]
+              (10.5,#1,{1/(#1*2)});
+            \xdef\sumcurve{\sumcurve + sin(#1*x*(157))/(#1*2)}
+        }
+        \addplot3 [red, samples=200] (x,0,{\sumcurve});
+        \draw [on layer=axis foreground]  (axis cs:0,0,0) -- (axis cs:10,0,0);
+        \draw (axis cs:10.5,0.25,0) -- (axis cs:10.5,5.5,0);
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Illustration de la transformée de Fourier, repris de \href{https://pgfplots.net/fourier-transform/}{pgfplots.net}.}
+        \label{fig:fourier}
     \end{figure}
     
-    \begin{table}[H]
-        \centering
-        \begin{tabular}{lcl}
-            Description & Symbole & Unités \\
-            \hline
-            Résistance linéique & $R'$ & \si{\ohm\per\meter} \\
-            Conductance linéique & $G'$ & \si{\siemens\per\meter} \\
-            Inductance linéique & $L'$ & \si{\henry\per\meter} \\
-            Capacité linéique & $C'$ & \si{\farad\per\meter}
-            
-        \end{tabular}
-        \caption{Paramètres du modèle de ligne de transmission.}
-        \label{tab:tline}
-    \end{table}
+    Pour illustrer un signal en fréquentielle, qui est souvent complexe, on représente souvent son module ($|a+b\cdot j| = \sqrt{a^2 + b^2}$), et parfois sa phase ($\angle a+b\cdot j = \arctan (b/a)$), en fonction de $\omega$.
+    
     
     \pagebreak
     \pagestyle{nextpages}
-    
-    En télécommunications, les pertes par câble ne sont pas les seules pertes à prendre en compte (\autoref{fig:radio_losses}). La puissance du signal reçu à l'antenne réceptrice (RX) est une fonction de la puissance isotrope rayonnée équivalente (EIRP en anglais) et de l'affaiblissement de propagation (path loss). L'EIRP se calcule de la manière suivante :
-    \begin{equation}
-        EIRP\Big|_{\si{\decibel\meter}} = P_t\Big|_{\si{\decibel\meter}} + G_t\Big|_{\si{\decibel}} - L_c\Big|_{\si{\decibel}},
-    \end{equation}
-    où $P_t$ est la puissance transmise par l'émetteur, $G_t$ est le gain de l'antenne émettrice et $L_c$ sont les pertes liées au câble reliant l'émetteur et l'antenne.
-    
-    Ensuite, l'affaiblissement de propagation dans un cas d'espace vide (free space), c.-à-d. sans obstacle, s'obtient comme suit :
-    \begin{equation}
-        L_{FS}\Big|_{\si{\decibel}} \approx 32.4 + 20 \log(f\Big|_{\si{\mega\hertz}}) + 20 \log(D\Big|_{\si{\kilo\meter}}),
-    \end{equation}
-    avec $f$ la fréquence (en \si{\mega\hertz}) et $D$ la distance inter-antennes (en \si{\kilo\meter}).
-    
-    De là, on peut finalement calculer le niveau de puissance reçu à l'antenne réceptrice (RSL) :
-    
-    \begin{equation}
-        RSL\Big|_{\si{\decibel\meter}} = EIRP\Big|_{\si{\decibel\meter}} + G_r\Big|_{\si{\decibel}} - L_{FS}\Big|_{\si{\decibel}},
-    \end{equation}
-    avec $G_r$ le gain de l'antenne réceptrice.
-    
-    \begin{figure}[H]
-            \centering
-            \begin{tikzpicture}
-                \node[circle,draw,label=above:{TX}] (TX) at (0,0) {};
-                \node[circle,draw,label=above:{RX}] (RX) at (12,0) {};
-                \path (TX) -- ++(0,-4) node[draw,rectangle,rounded corners] (transmetteur) {Émetteur};
-                \draw[->,thick,dashed] (transmetteur) -- (TX) node[midway,above,sloped,align=center] {Ligne de\\transmission};
-                \draw (RX) -- (RX |- transmetteur.north) coordinate (bottom);
-                \draw (bottom) ++(-.5,0) -- ++(1,0);
-
-                \draw[|<->|] (TX.center |-, -4.7) -- (RX.center |-, -4.7) node[midway,above,sloped] {Distance inter-antennes};
-                
-                \foreach \i in {1,...,3} {
-                    \draw (TX) ++(30:\i) arc (30:-30:\i);
-                }
-            \end{tikzpicture}
-            \caption{Calcul de pertes lors de télécommunications.}
-            \label{fig:radio_losses}
-        \end{figure}
-    
-    \pagebreak
     \part*{Exercices}
     
-    \begin{exercice}[Câble vidéo]{1}
-        Considérez un câble coaxial RG218U, fréquemment utilisé pour la transmission vidéo dans les ultra hautes fréquences (UHF). Les valeurs des paramètres primaires sont données dans le \autoref{tab:exo1}. La conductance $G$ est supposée négligeable.
+    \begin{exercice}[Calculs]{1}
+        Calculez la transformée de Fourier des signaux suivants. Représentez à chaque fois le signal en temporel et sa transformée de Fourier en fréquentiel.
         
-        \begin{table}[H]
-            \centering
-            \begin{tabular}{cl}
-                Symbole & Valeur \\
-                \hline
-                $R'$ & \SI{0.368}{\ohm\per\meter} \\
-                $L'$ & \SI{250}{\nano\henry\per\meter} \\
-                $C'$ & \SI{102.4}{\pico\farad\per\meter}
-            \end{tabular}
-            \caption{Paramètres du modèle de ligne de transmission.}
-            \label{tab:exo1}
-        \end{table}
+        \begin{itemize}
+            \item $x(t)=\left\{\begin{array}{ll}e^{-t}&\mbox{pour }t\geq 0\\0&\mbox{pour }t<0\end{array}\right.$
+            \item $x(t)=\left\{\begin{array}{ll}1&\mbox{pour }-T\leq t\leq T\\0&\mbox{ailleurs}\end{array}\right.$
+            \item $x(t)=\left\{\begin{array}{ll}1&\mbox{pour } 0\leq t\leq 2T\\0&\mbox{ailleurs}\end{array}\right.$
+        \end{itemize}
+    
+        Ensuite, calculez la transformée de Fourier inverse de
+    
+        \begin{equation}
+        X(\omega)=\left\{\begin{array}{ll}e^{-2\omega}&\mbox{pour } \omega \geq 0\\0&\mbox{pour } \omega<0 \end{array}\right.
+        \end{equation}
+
+
+    \end{exercice}
         
-        \begin{enumerate}
-            \item Calculez l'impédance caractéristique du câble, la constance d'atténuation et la vitesse de phase pour un signal à \SI{100}{\mega\hertz}.
-            \item En supposant une puissance à l'entrée de \SI{66}{\micro\watt}, déterminez la longueur maximum de câble pour que la puissance à la sortie soit au moins égale à \SI{0.42}{\micro\watt}.
-        \end{enumerate}
+    \begin{reponse}
+        En appliquant la définition de la transformée de Fourier, on trouve :
+        \begin{itemize}
+            \item $X(\omega)=\left[\frac{e^{-t(1+j\omega)}}{1+j\omega}\right]_0^\infty=\frac{1}{1+j\omega}$ si $\Re(j\omega)>-1$
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                \begin{axis}[
+                    xlabel={$\omega$ (\si{\radian\per\second})},  
+                    ylabel={$|X(\omega)|$},
+                    xmax = 12,
+                    ymax = 1.1,
+                    domain=-1:10,
+                    grid=both,
+                ]
+                \addplot [blue,no marks,smooth]{1/sqrt(x^2 + 1)};
+                \end{axis}
+                \end{tikzpicture}
+            \end{figure}
+            \item $X(\omega)=-\left[\frac{e^{-jt\omega}}{j\omega}\right]_{-T}^T=\frac{2\sin{(T\omega)}}{\omega}$
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                \begin{axis}[
+                    xlabel={$\omega$ (\si{\radian\per\second})},  
+                    ylabel={$|X(\omega)|$},
+                    grid=both,
+                    %xmax = 1,
+                    ymax = 2.2,
+                    domain=-1440:1440,
+                    xtick={-720,-360,...,720},
+                    xticklabels={$-\frac{4\pi}{T}$,$-\frac{2\pi}{T}$,0,$\frac{2\pi}{T}$,$\frac{4\pi}{T}$},
+                ]
+                \addplot [blue,no marks]{2*sin(x)/(x*pi/180)};
+                \end{axis}
+                \end{tikzpicture}
+            \end{figure}
+            \item $X(\omega)=-\left[\frac{e^{-jt\omega}}{j\omega}\right]_{0}^{2T}=\frac{1- e^{-2jT\omega}}{j\omega}$
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                \begin{axis}[
+                    xlabel={$\omega$ (\si{\radian\per\second})},  
+                    ylabel={$|X(\omega)|$},
+                    grid=both,
+                    %xmax = 1,
+                    ymax = 2.2,
+                    domain=-1440:1440,
+                    xtick={-720,-360,...,720},
+                    xticklabels={$-\frac{4\pi}{T}$,$-\frac{2\pi}{T}$,0,$\frac{2\pi}{T}$,$\frac{4\pi}{T}$},
+                ]
+                \addplot [blue,no marks]{2*abs(sin(x)/(x*pi/180))};
+                \end{axis}
+                \end{tikzpicture}
+            \end{figure}
+        \end{itemize}
+        
+        De même pour la transformée inverse :
+        
+        \begin{equation}
+            x(t) = -\left[\frac{e^{-\omega(jt+2)}}{2\pi(jt+2)}\right]_{0}^{\infty}=\frac{1}{2\pi(jt+2)}
+        \end{equation}
+    \end{reponse}
+    
+    \begin{exercice}[Propriétés]{2}
+        Par calcul, à partir de la définition de la transformée, montrez les propriétés suivantes :
+        
+        \begin{itemize}
+            \item Linéarité : si $x(t)=x_1(t)+x_2(t)$, alors $X(\omega)=X_1(\omega)+X_2(\omega)$.
+            \item Translation : la transformée de $x(t-a)$ est $e^{-j\omega a}X(\omega)$.
+            \item Modulation : la transformée de $x(t)\cos(\omega_0 t)$ est $\frac{1}{2}\left(X(\omega-\omega_0)+X(\omega+\omega_0)\right)$.
+        \end{itemize}
+
     \end{exercice}
     
     \begin{reponse}
-        Une simple application des formules du rappel permet de répondre aux questions :
-        
-        \begin{enumerate}
-            \item \begin{enumerate}
-                \item $Z_0=49.41-0.06j$, $|Z_0|=\SI{49.41}{\ohm}$
-                \item $\alpha=\SI{0.0037}{\per\meter}$
-                \item $v_p=\SI{197642218}{\meter\per\second}$
-            \end{enumerate}
-            \item Comme la puissance est proportionnelle au carré de la tension (loi d'Ohm), on peut écrire :
+        \begin{itemize}
+            \item Linéarité : en injectant $x(t)$ dans la définition de la transformée, on trouve
             \begin{equation}
-                \frac{\SI{0.42}{\micro\watt}}{\SI{66}{\micro\watt}} = \frac{|V(z+dz,t)|^2}{|V(z,t)|^2} = e^{-2\alpha dz}.
+                X(\omega)= \int\limits_{-\infty}^\infty (x_1(t)+x_2(t)) e^{-j\omega t} dt = \underbrace{\int\limits_{-\infty}^\infty x_1(t) e^{-j\omega t} dt}_{X_1(\omega)} + \underbrace{\int\limits_{-\infty}^\infty x_2(t) e^{-j\omega t} dt}_{X_2(\omega)} 
             \end{equation}
-            Ensuite, en isolant la longueur de câble $dz$ :
+            \item Translation : en substituant $t-a$ par $s$ (donc $t=a+s$), on retrouve $X(\omega)$ à une constante près
             \begin{equation}
-                dz = \frac{1}{-2\alpha}\ln\left(\frac{\SI{0.42}{\micro\watt}}{\SI{66}{\micro\watt}}\right) = \frac{1}{2\alpha}\ln\left(\frac{\SI{66}{\micro\watt}}{\SI{0.42}{\micro\watt}}\right) = \SI{679}{\meter}.
+                X(\omega)= \int\limits_{-\infty}^{\infty} x(t-a) e^{-j\omega t} dt = \int\limits_{-\infty}^{\infty} x(s) e^{-j\omega (a+s)} ds =  e^{-j\omega a} \underbrace{\int\limits_{-\infty}^{\infty} x(s) e^{-j\omega s} ds}_{X(\omega)}
             \end{equation}
-        \end{enumerate}
+            \item Modulation : en réécrivant le $\cos(\omega_0 t)=\frac{e^{j\omega_0 t}+e^{-j\omega_0 t}}{2}$, on trouve
+            \begin{align}
+                X(\omega) &= \int\limits_{-\infty}^\infty x(t)\frac{e^{j\omega_0 t}+e^{-j\omega_0 t}}{2}e^{-j\omega t} dt \\
+                &= \frac{1}{2}\left(\underbrace{\int\limits_{-\infty}^\infty x(t) e^{-j(\omega-\omega_0) t} dt}_{X(\omega-\omega_0)} + \underbrace{\int\limits_{-\infty}^\infty x(t) e^{-j(\omega+\omega_0) t} dt}_{X(\omega+\omega_0)} \right)
+            \end{align}
+        \end{itemize}
     \end{reponse}
     
-    \begin{exercice}[Adaptation d'impédance]{2}
-        En pratique, on souhaite souvent avoir une impédance de ligne bien précise afin que les câbles utilisés puissent être compatibles avec un maximum d'appareils différents. Ici, on souhaite avoir une impédance de ligne $|Z_0|=\SI{50}{\ohm}$.
-        
+    \begin{exercice}[Signaux réels]{3}
         \begin{enumerate}
-            \item Dans un premier temps, calculez la fréquence qui permettrait d'atteindre l'impédance voulue.
-            \item Dans un second temps, on va plutôt changer la résistance linéique du câble\footnote{En pratique, on ne peut pas changer la composition du câble à notre guise. On va donc plutôt rajouter une résistance en fin de ligne pour compenser la différence entre l'impédance réelle et celle voulue.}. Calculez la valeur de résistance linéique $G'$ qu'il faudrait utiliser pour avoir l'impédance recherchée.
-            \item Est-il possible de rajouter une conductance linéique afin d'augmenter l'impédance de ligne ?
+            \item Si $x(t)$ est un signal réel, et $X(2)=1+j$, que vaut $X(-2)$ ? Que peut-on dire sur $X(0)$ ?
+            \item Pour chacune des transformées de Fourier ci-dessus, indiquez si elle correspond à un signal réel :            
+            \begin{itemize}
+                \item $X(\omega)=e^{-\omega}$
+                \item $X(\omega)=e^{-|\omega|}$
+                \item $X(\omega)=\frac{\sin(\omega)}{\omega}$
+                \item $X(\omega)=\left\{\begin{array}{ll}(1+j)&\mbox{pour } -\omega_0 \leq \omega \leq \omega_0\\0&\mbox{ailleurs} \end{array}\right.$
+            \end{itemize}
         \end{enumerate}
+
     \end{exercice}
     
     \begin{reponse}
-        En prenant le module de l'\autoref{eq:impedance} et en mettant tout au carré, on obtient :
-        \begin{equation}
-            50^2 =\left|\frac{R' + j \omega L'}{G' + j \omega C'}\right|.
-        \end{equation}
-        Ensuite, on peut résoudre (analytiquement, avec la calculette ou via \py{Python}) l'équation pour trouver $f=\frac{\omega}{2\pi}$ ou $R'$:
-        \begin{equation}
-            2500 =\frac{\sqrt{R'^2 + \omega^2 L'^2}}{\sqrt{G'^2 + \omega^2 C'^2}} \Rightarrow 2500^2 =\frac{R'^2 + \omega^2 L'^2}{G'^2 + \omega^2 C'^2}.
-        \end{equation}
         \begin{enumerate}
-            \item On obtient environ \SI{1.06}{\mega\hertz} comme fréquence nécessaire pour avoir une impédance de \SI{50}{\ohm}.
-            \item On calcule qu'il faudrait augmenter la résistance linéique du câble à \SI{34.76}{\ohm\per\meter}.
-            \item Non, rajouter l'effet de la conductance linéique ne peut que réduire l'impédance de ligne.
+            \item Comme le signal est réel, $X(-2)=X^*(2)=1-j$. Pour ce qui est de $X(0)$, sa partie imaginaire doit obligatoirement être nulle.
+            \item Pour vérifier si le signal de base est réel, il suffit de vérifier que $X(-\omega)=X^*(\omega)$:
+            \begin{itemize}
+                \item Non $\Rightarrow$ $X(-\omega)=e^{\omega}\ne X^*(\omega)=e^{-\omega}$
+                \item Oui $\Rightarrow$ $X(-\omega)=e^{-|\omega|} = X^*(\omega)=e^{-|\omega|}$
+                \item Oui $\Rightarrow$ $X(-\omega)=\frac{-\sin(\omega)}{-\omega}=X^*(\omega)=\frac{\sin(\omega)}{\omega}$
+                \item Non $\Rightarrow$ $-\omega_0 \leq \omega \leq \omega_0$, $X(-\omega)=1+j\ne X^*(\omega)=1-j$
+            \end{itemize}
         \end{enumerate}
     \end{reponse}
-    
-    \begin{exercice}[Lien radio]{3}
-    
-        Considérez le lien radio illustré sur la \autoref{fig:radio_link}, avec les données suivantes :
-        
-        \begin{enumerate}
-            \item L'émetteur travaille à une fréquence de \SI{1}{\giga\hertz}.
-            \item L'émetteur et son antenne sont séparés par un câble coaxial RG9 de \SI{15}{\meter}. L'atténuation de ce dernier est d'environ \SI{0.23}{\decibel\per\meter}.
-            \item La distance entre l'antenne émettrice (TX) et l'antenne réceptrice (RX) est de \SI{8}{\kilo\meter}.
-            \item L'antenne TX possède un gain de \SI{17}{\decibel} et une perte due à la connexion câblée de \SI{1.5}{\decibel}.
-            \item L'antenne RX possède un gain de \SI{2}{\decibel} et un seul de sensibilité à \SI{-75}{\decibel\meter}.
-        \end{enumerate}
-        
-        Calculez la puissance minimale requise à l'émetteur pour que le signal soit bien reçu.
-    
-        \begin{figure}[H]
-            \centering
-            \begin{tikzpicture}
-                \node[circle,draw,label=above:{TX}] (TX) at (0,0) {};
-                \node[circle,draw,label=above:{RX}] (RX) at (12,0) {};
-                \path (TX) -- ++(0,-2) node[draw,rectangle,rounded corners] (transmetteur) {Émetteur};
-                \draw[->,thick,dashed] (transmetteur) -- (TX) node[midway,above,sloped] {RG9};
-                \draw (RX) -- (RX |- transmetteur.north) coordinate (bottom);
-                \draw (bottom) ++(-.5,0) -- ++(1,0);
-                
-                \draw[|<->|] (-2, |- transmetteur) -- (-2, |- TX.center) node[midway,above,sloped] {\SI{15}{\meter}};
-                \draw[|<->|] (TX.center |-, -3) -- (RX.center |-, -3) node[midway,above,sloped] {\SI{8}{\kilo\meter}};
-                
-                \foreach \i in {1,...,3} {
-                    \draw (TX) ++(30:\i) arc (30:-30:\i);
-                }
-            \end{tikzpicture}
-            \caption{Lien radio.}
-            \label{fig:radio_link}
-        \end{figure}
-    \end{exercice}
-    
-    \begin{reponse}
-        En reprenant ce qui est donné dans le rappel, on peut d'abord calculer l'EIRP :
-        \begin{equation}
-            EIRP\Big|_{\si{\decibel\meter}} = P_t\Big|_{\si{\decibel\meter}} + 17 - L_c\Big|_{\si{\decibel}}
-        \end{equation}
-        avec $L_c = 1.5 + 15\cdot 0.23 = \SI{4.95}{\decibel}$.
-        
-        Ensuite, l'affaiblissement de propagation peut se calculer :
-        \begin{equation}
-            L_{FS}\Big|_{\si{\decibel}} \approx 32.4 + 20 \log(1000) + 20 \log(8) = \SI{110.5}{\decibel},
-        \end{equation}
-        
-        Pour finir, on peut trouver la puissance minimale à l'émission afin d'obtenir un signal supérieur ou égal à \SI{-75}{\decibel\meter} à l'antenne réceptrice :
-        \begin{equation}
-            -75 \leq P_t\Big|_{\si{\decibel\meter}} + 17 - 4.95 + 2 - 110.5
-        \end{equation}
-        
-        On trouve $P_t \geq \SI{21.4}{\decibel\meter}$.
-        
-        
-    \end{reponse}
-        
-   
 
 \end{document}
