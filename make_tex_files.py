@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     for file in files:
 
-        number = file[len(prefix)]
+        number = file[len(prefix):-4]
 
         exe_filename = f"TP_{number}.tex"
         sol_filename = f"TP_{number}_solution.tex"
@@ -21,6 +21,8 @@ if __name__ == "__main__":
 
             content = f.readlines()
             content = [line for line in content if not r"\def\AvecSolutions{}" in line]
+
+        os.remove(file)
 
         with open(exe_filename, "w") as f:
 
