@@ -1,2 +1,14 @@
 
 notebooks/.ipynb_checkpoints/
+
+_minted-*/
+
+*.aux
+
+*.fdb_latexmk
+
+*.log
+
+*.fls
+
+*.out

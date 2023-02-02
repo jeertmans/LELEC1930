@@ -25,9 +25,17 @@ jobs:
           latexmk_shell_escape: true
           extra_system_packages: "py-pygments"
           root_file: |
-            "TP_*.tex"
+            TP_1.tex
+            TP_1_solution.tex
+            TP_2.tex
+            TP_2_solution.tex
+            TP_3.tex
+            TP_3_solution.tex
+            TP_4.tex
+            TP_4_solution.tex
+            TP_5.tex
+            TP_5_solution.tex
             rappel_complexes.tex
-          glob_root_file: true
           continue_on_error: true
       - uses: actions/upload-artifact@v2
         with:
