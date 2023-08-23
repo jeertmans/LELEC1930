@@ -1,5 +1,7 @@
 # LELEC1930
 
+[![lite-badge](https://jupyterlite.rtfd.io/en/latest/_static/badge.svg)](https://eertmans.be/LELEC1930/retro/notebooks/?path=seance4.ipynb)
+
 Ce répertoire contient les différents fichiers sources utilisés pour les séances d'exercices pour le cours d'[introduction aux télécommunications](https://uclouvain.be/cours-2021-lelec1930) donné par le professeur Jérome Louveaux, avec moi-même (Jérome Eertmans) pour assistant.
 
 ### Contribuer
