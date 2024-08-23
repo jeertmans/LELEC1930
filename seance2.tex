@@ -2,7 +2,7 @@
 
 \newcommand\seancetitle{Lignes de transmissions}
 \newcommand\seancenumber{2}
-\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
+%\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
 
 \input{preamble.tex}
 
@@ -81,7 +81,7 @@
     \pagebreak
     \pagestyle{nextpages}
     
-    En télécommunications, les pertes par câble ne sont pas les seules pertes à prendre en compte (\autoref{fig:radio_losses}). La puissance du signal reçu à l'antenne réceptrice (RX) est une fonction de la puissance isotrope rayonnée équivalente (EIRP en anglais) et de l'affaiblissement de propagation (path loss). L'EIRP se calcule de la manière suivante :
+    Dans le cas des télécommunications sans fil, les pertes par câble ne sont pas les seules pertes à prendre en compte (\autoref{fig:radio_losses}). La puissance du signal reçu à l'antenne réceptrice (RX) est une fonction de la puissance isotrope rayonnée équivalente (EIRP en anglais) et de l'affaiblissement de propagation (path loss). L'EIRP se calcule de la manière suivante :
     \begin{equation}
         EIRP\Big|_{\si{\decibel\meter}} = P_t\Big|_{\si{\decibel\meter}} + G_t\Big|_{\si{\decibel}} - L_c\Big|_{\si{\decibel}},
     \end{equation}
@@ -91,7 +91,7 @@
     \begin{equation}
         L_{FS}\Big|_{\si{\decibel}} \approx 32.4 + 20 \log(f\Big|_{\si{\mega\hertz}}) + 20 \log(D\Big|_{\si{\kilo\meter}}),
     \end{equation}
-    avec $f$ la fréquence (en \si{\mega\hertz}) et $D$ la distance inter-antennes (en \si{\kilo\meter}).
+    avec $f$ la fréquence (en \si{\mega\hertz}) et $D$ la distance inter-antennes (en \si{\kilo\meter}). La fonction $\log(x)$ désigne le logarithme en base 10, $\log_{10}(x)$.
     
     De là, on peut finalement calculer le niveau de puissance reçu à l'antenne réceptrice (RSL) :
     
@@ -124,7 +124,7 @@
     \part*{Exercices}
     
     \begin{exercice}[Câble vidéo]{1}
-        Considérez un câble coaxial RG218U, fréquemment utilisé pour la transmission vidéo dans les ultra hautes fréquences (UHF). Les valeurs des paramètres primaires sont données dans le \autoref{tab:exo1}. La conductance $G$ est supposée négligeable.
+        Considérez un câble coaxial RG218U, fréquemment utilisé pour la transmission vidéo dans les ultra hautes fréquences (UHF). Les valeurs des paramètres primaires sont données dans le \autoref{tab:exo1}. La conductance linéique $G'$ est supposée négligeable.
         
         \begin{table}[H]
             \centering
@@ -169,8 +169,8 @@
         En pratique, on souhaite souvent avoir une impédance de ligne bien précise afin que les câbles utilisés puissent être compatibles avec un maximum d'appareils différents. Ici, on souhaite avoir une impédance de ligne $|Z_0|=\SI{50}{\ohm}$.
         
         \begin{enumerate}
-            \item Dans un premier temps, calculez la fréquence qui permettrait d'atteindre l'impédance voulue.
-            \item Dans un second temps, on va plutôt changer la résistance linéique du câble\footnote{En pratique, on ne peut pas changer la composition du câble à notre guise. On va donc plutôt rajouter une résistance en fin de ligne pour compenser la différence entre l'impédance réelle et celle voulue.}. Calculez la valeur de résistance linéique $G'$ qu'il faudrait utiliser pour avoir l'impédance recherchée.
+            \item Dans un premier temps, calculez la fréquence qui permettrait d'atteindre l'impédance voulue (sur base des paramètres donnés dans le \autoref{tab:exo1}).
+            \item Dans un second temps, on va plutôt changer la résistance linéique du câble\footnote{En pratique, on ne peut pas changer la composition du câble à notre guise. On va donc plutôt rajouter une résistance en fin de ligne pour compenser la différence entre l'impédance réelle et celle voulue.}. Calculez la valeur de résistance linéique $R'$ qu'il faudrait utiliser pour avoir l'impédance recherchée (pour le signal à \SI{100}{\mega\hertz}).
             \item Est-il possible de rajouter une conductance linéique afin d'augmenter l'impédance de ligne ?
         \end{enumerate}
     \end{exercice}

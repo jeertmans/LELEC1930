@@ -2,7 +2,7 @@
 
 \newcommand\seancetitle{Transformée de Fourier}
 \newcommand\seancenumber{1}
-%\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
+\def\AvecSolutions{}  % Commenter pour ne pas afficher les solutions
 
 \input{preamble.tex}
 
@@ -20,7 +20,7 @@
     
     Transformée de Fourier inverse :
     \begin{equation}
-        x(t) = \frac{1}{2\pi} \int\limits_{-\infty}^{\infty} X(\omega) e^{-j\omega t} d\omega
+        x(t) = \frac{1}{2\pi} \int\limits_{-\infty}^{\infty} X(\omega) e^{j\omega t} d\omega
     \end{equation}
     
     Propriété de la transformée de Fourier : 
@@ -62,7 +62,7 @@
         \label{fig:fourier}
     \end{figure}
     
-    Pour illustrer un signal en fréquentielle, qui est souvent complexe, on représente souvent son module ($|a+b\cdot j| = \sqrt{a^2 + b^2}$), et parfois sa phase ($\angle a+b\cdot j = \arctan (b/a)$), en fonction de $\omega$.
+    Pour illustrer un signal en fréquentiel, qui est souvent complexe, on représente souvent son module ($|a+b\cdot j| = \sqrt{a^2 + b^2}$), et parfois sa phase ($\angle a+b\cdot j = \arctan (b/a)$), en fonction de $\omega$.
     
     
     \pagebreak
@@ -90,7 +90,7 @@
     \begin{reponse}
         En appliquant la définition de la transformée de Fourier, on trouve :
         \begin{itemize}
-            \item $X(\omega)=\left[\frac{e^{-t(1+j\omega)}}{1+j\omega}\right]_0^\infty=\frac{1}{1+j\omega}$ si $\Re(j\omega)>-1$
+            \item $X(\omega)=-\left[\frac{e^{-t(1+j\omega)}}{1+j\omega}\right]_0^\infty=\frac{1}{1+j\omega}$
             \begin{figure}[H]
                 \centering
                 \begin{tikzpicture}
@@ -147,7 +147,7 @@
         De même pour la transformée inverse :
         
         \begin{equation}
-            x(t) = -\left[\frac{e^{-\omega(jt+2)}}{2\pi(jt+2)}\right]_{0}^{\infty}=\frac{1}{2\pi(jt+2)}
+            x(t) = \left[\frac{e^{\omega(jt-2)}}{2\pi(jt-2)}\right]_{0}^{\infty}=\frac{1}{2\pi(2-jt)}
         \end{equation}
     \end{reponse}
     
@@ -168,13 +168,13 @@
             \begin{equation}
                 X(\omega)= \int\limits_{-\infty}^\infty (x_1(t)+x_2(t)) e^{-j\omega t} dt = \underbrace{\int\limits_{-\infty}^\infty x_1(t) e^{-j\omega t} dt}_{X_1(\omega)} + \underbrace{\int\limits_{-\infty}^\infty x_2(t) e^{-j\omega t} dt}_{X_2(\omega)} 
             \end{equation}
-            \item Translation : en substituant $t-a$ par $s$ (donc $t=a+s$), on retrouve $X(\omega)$ à une constante près
+            \item Translation : on pose $y(t)=x(t-a)$. A partir de la transformée de Fourier de $y(t)$, en substituant $t-a$ par $s$ (donc $t=a+s$), on retrouve $X(\omega)$ à une constante près
             \begin{equation}
-                X(\omega)= \int\limits_{-\infty}^{\infty} x(t-a) e^{-j\omega t} dt = \int\limits_{-\infty}^{\infty} x(s) e^{-j\omega (a+s)} ds =  e^{-j\omega a} \underbrace{\int\limits_{-\infty}^{\infty} x(s) e^{-j\omega s} ds}_{X(\omega)}
+                Y(\omega)= \int\limits_{-\infty}^{\infty} x(t-a) e^{-j\omega t} dt = \int\limits_{-\infty}^{\infty} x(s) e^{-j\omega (a+s)} ds =  e^{-j\omega a} \underbrace{\int\limits_{-\infty}^{\infty} x(s) e^{-j\omega s} ds}_{X(\omega)}
             \end{equation}
-            \item Modulation : en réécrivant le $\cos(\omega_0 t)=\frac{e^{j\omega_0 t}+e^{-j\omega_0 t}}{2}$, on trouve
+            \item Modulation : on pose $y(t)=x(t)\cos(\omega_0 t)$. En réécrivant le $\cos(\omega_0 t)=\frac{e^{j\omega_0 t}+e^{-j\omega_0 t}}{2}$, on trouve
             \begin{align}
-                X(\omega) &= \int\limits_{-\infty}^\infty x(t)\frac{e^{j\omega_0 t}+e^{-j\omega_0 t}}{2}e^{-j\omega t} dt \\
+                Y(\omega) &= \int\limits_{-\infty}^\infty x(t)\frac{e^{j\omega_0 t}+e^{-j\omega_0 t}}{2}e^{-j\omega t} dt \\
                 &= \frac{1}{2}\left(\underbrace{\int\limits_{-\infty}^\infty x(t) e^{-j(\omega-\omega_0) t} dt}_{X(\omega-\omega_0)} + \underbrace{\int\limits_{-\infty}^\infty x(t) e^{-j(\omega+\omega_0) t} dt}_{X(\omega+\omega_0)} \right)
             \end{align}
         \end{itemize}
@@ -183,7 +183,7 @@
     \begin{exercice}[Signaux réels]{3}
         \begin{enumerate}
             \item Si $x(t)$ est un signal réel, et $X(2)=1+j$, que vaut $X(-2)$ ? Que peut-on dire sur $X(0)$ ?
-            \item Pour chacune des transformées de Fourier ci-dessus, indiquez si elle correspond à un signal réel :            
+            \item Pour chacune des transformées de Fourier ci-dessous, indiquez si elle correspond à un signal réel :            
             \begin{itemize}
                 \item $X(\omega)=e^{-\omega}$
                 \item $X(\omega)=e^{-|\omega|}$
