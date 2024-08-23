@@ -48,8 +48,8 @@
             \coordinate (-Y) at (0,{-\R*sin(\ang)});
             \node[fill=mydarkblue,circle,inner sep=0.8] (R') at (R) {};
             \node[fill=mydarkred,circle,inner sep=0.8] (-R') at (-R) {};
-            \node[mydarkblue,above right=-2] at (R') {$z=x+iy=re^{i\theta}$};
-            \node[mydarkred,below right=-1] at (-R') {$z^*=x-iy=re^{-i\theta}$};
+            \node[mydarkblue,above right=-2] at (R') {$z=x+jy=re^{j\theta}$};
+            \node[mydarkred,below right=-1] at (-R') {$z^*=x-jy=re^{-j\theta}$};
             \draw[dashed,mydarkblue]
             (Y) -- (R') --++ (0,{0.1-\R*sin(\ang)});
             \draw[dashed,mydarkred]
@@ -71,13 +71,13 @@
         \label{fig:complex_plane}
     \end{figure}
     
-    Une autre façon de représenter un nombre complexe est d'utiliser son module, $r$, et son argument, $\theta$. Ainsi, $z$ peut s'écrire $r e^{j \theta}$. Le module de $z$, pouvant aussi s'écrire $|z|$, équivaut à la longueur du vecteur $x+iy$, c.-à-d. $|z|=r=\sqrt{x^2 + y^2}$. L'argument de $z$, parfois noté $\angle z$, quant à lui, est l'angle que forme le vecteur avec l'axe des abscisses, tel que $\angle z = \theta = \arctan(y/x)$. Le complexe conjugué de $z$, noté $z^*$, s'obtient en prenant l'opposé de la partie imaginaire de $z$ : $z^*=x - j y$.
+    Une autre façon de représenter un nombre complexe est d'utiliser son module, $r$, et son argument, $\theta$. Ainsi, $z$ peut s'écrire $r e^{j \theta}$. Le module de $z$, pouvant aussi s'écrire $|z|$, équivaut à la longueur du vecteur $x+jy$, c.-à-d. $|z|=r=\sqrt{x^2 + y^2}$. L'argument de $z$, parfois noté $\angle z$, quant à lui, est l'angle que forme le vecteur avec l'axe des abscisses, tel que $\angle z = \theta = \arctan(y/x)$. Le complexe conjugué de $z$, noté $z^*$, s'obtient en prenant l'opposé de la partie imaginaire de $z$ : $z^*=x - j y$.
     
     \paragraph{Propriétés}
     
     \begin{itemize}
-        \item Formule d'Euler : $e^{\pm j a x} = \cos(ax) \pm \sin(a x)$, pour tous réels $a$ et $x$, voir \autoref{fig:euler}.
-        \item Trigonométrie : $\cos(a x) = \frac{e^{ a x} + e^{-a x}}{2}$ et $\sin(a x) = \frac{e^{ a x} - e^{-a x}}{2j}$.
+        \item Formule d'Euler : $e^{\pm j a x} = \cos(ax) \pm j \sin(a x)$, pour tous réels $a$ et $x$, voir \autoref{fig:euler}.
+        \item Trigonométrie : $\cos(a x) = \frac{e^{ j a x} + e^{-ja x}}{2}$ et $\sin(a x) = \frac{e^{ ja x} - e^{-ja x}}{2j}$.
         \item Inverse : $\frac{1}{j} = \frac{1}{j} \frac{j}{j} = \frac{j}{-1} = -j$.
     \end{itemize}
     
@@ -102,8 +102,8 @@
             \draw[myblue] (-10:\R) arc (-10:100:\R);
             \node[fill=myred,circle,inner sep=0.8] at (R) {};
             \node[fill=myred,circle,inner sep=0.8] at (Q) {};
-            \node[mydarkblue,above right=0] at (R) {$z=re^{i\theta}$};
-            \node[mydarkblue,left=2,above right=0] at (Q) {$ze^{i\phi}=re^{i(\theta+\phi)}$};
+            \node[mydarkblue,above right=0] at (R) {$z=re^{j\theta}$};
+            \node[mydarkblue,left=2,above right=0] at (Q) {$ze^{j\phi}=re^{j(\theta+\phi)}$};
             \draw[dashed,mydarkblue]
             (Y) -- (R) --++ (0,{0.1-\R*sin(\ang)});
             \draw[->,line width=0.9] (-0.1*\xmax,0) -- (\xmax+0.05,0) node[right] {Re};
