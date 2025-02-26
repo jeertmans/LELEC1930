@@ -20,7 +20,7 @@ jobs:
         run: |
           python make_tex_files.py
       - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v2
+        uses: xu-cheng/latex-action@v3
         with:
           latexmk_shell_escape: true
           extra_system_packages: "py-pygments"
